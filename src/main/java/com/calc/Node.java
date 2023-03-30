@@ -1,10 +1,5 @@
-enum nType{
-    num,
-    add,
-    sub,
-    mul,
-    div
-}
+package com.calc;
+
 public class Node {
     public nType tp;
     public Node l, r;

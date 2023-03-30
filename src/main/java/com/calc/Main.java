@@ -1,3 +1,8 @@
+package com.calc;
+
+import com.calc.Node;
+import com.calc.nType;
+
 import java.util.Scanner;
 public class Main {
     static Node vyrazhenie(String s){
