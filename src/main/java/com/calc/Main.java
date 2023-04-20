@@ -1,9 +1,6 @@
 package com.calc;
-
-import com.calc.Node;
-import com.calc.nType;
-
 import java.util.Scanner;
+
 public class Main {
     static Node vyrazhenie(String s){
         //System.out.println("vyrazhenie"+s);
@@ -14,10 +11,10 @@ public class Main {
             if (s.charAt(s.length()-1) == ')'){
                 return slag(s.substring(1, s.length()-1));
             } else {
-                System.out.println("ERROR: missing ')'");
+                throw new BracketsException("ERROR: missing ')'");
             }
         } else if (s.charAt(s.length()-1) == ')'){
-            System.out.println("ERROR: missing '('");
+            throw new BracketsException("ERROR: missing '('");
         }
         return new Node(nType.num, null, null, Float.parseFloat(s));
     }
@@ -28,7 +25,7 @@ public class Main {
             if (s.charAt(i) == '(') {
                 br--;
                 if (br < 0){
-                    System.out.println("ERROR: missing ')'");
+                    throw new BracketsException("ERROR: missing ')'");
                 }
             }
             if (s.charAt(i) == ')'){
@@ -54,7 +51,7 @@ public class Main {
             if (s.charAt(i) == '(') {
                 br--;
                 if (br < 0){
-                    System.out.println("ERROR: missing ')'");
+                    throw new BracketsException("ERROR: missing ')'");
                 }
             }
             if (s.charAt(i) == ')'){
@@ -88,23 +85,26 @@ public class Main {
             return eval(tr.l)*eval(tr.r);
         }
         if (tr.tp == nType.div){
-            float z = eval(tr.r);
-            if (z == 0){
-                System.out.println("ERROR: div by 0");
-                return 0;
+            if (eval(tr.r) == 0){
+                throw new ArithmeticException("/ by 0");
             }
             return eval(tr.l)/eval(tr.r);
         }
         return 0;
     }
 
+    public static float calculate(String s){
+        s = s.replace(" ", "");
+        Node tree = slag(s);
+        float res = 0;
+        return eval(tree);
+    }
+
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         while (in.hasNextLine()) {
             String s = in.nextLine();
-            s = s.replace(" ", "");
-            Node tree = slag(s);
-            System.out.println(eval(tree));
+            System.out.println(calculate(s));
         }
     }
 }
