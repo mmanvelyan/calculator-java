@@ -19,6 +19,13 @@ public class calculateTest {
     public void sub() {
         Assertions.assertEquals(-1.0, calculate("2-3"));
     }
+
+    @Test
+    public void leadingMinus() {
+        Assertions.assertEquals(1.0, calculate("-2+3"));
+    }
+
+
     @Test
     public void div() {
         Assertions.assertEquals(1.5, calculate("3/2"));
@@ -32,6 +39,16 @@ public class calculateTest {
     @Test
     public void missingClosingBracket() {
         Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("(2+3"));
+    }
+
+    @Test
+    public void numberBeforeBrackets() {
+        Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("2(3)"));
+    }
+
+    @Test
+    public void numberAfterBrackets() {
+        Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("(3)2"));
     }
 
     @Test

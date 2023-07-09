@@ -1,28 +1,55 @@
 package com.calc;
 
+import static com.calc.Type.ADD;
+
 public class Node {
-    public Type tp;
-    public Node l, r;
-    public float val;
-    public void print(Node n, int k){
-        System.out.println(k + " : " + n.tp.toString() + ", val = " + n.val);
-        if (n.l != null) {
-            print(n.l, 2*k);
+    private Node l, r;
+    private Token v;
+
+    public float eval(){
+        //System.out.println(tr.tp+" "+tr.val);
+        if (v.tp == Type.NUM){
+            return v.val;
         }
-        if (n.r != null){
-            print(n.r, 2*k+1);
+        if (v.tp == ADD){
+            return l.eval()+r.eval();
+        }
+        if (v.tp == Type.SUB){
+            return l.eval()-r.eval();
+        }
+        if (v.tp == Type.MUL){
+            return l.eval()*r.eval();
+        }
+        if (v.tp == Type.DIV) {
+            float rEval = r.eval();
+            if (rEval == 0) {
+                throw new ArithmeticException("/ by 0");
+            }
+            return l.eval() / rEval;
+        }
+        return 0;
+    }
+    public void print(){
+        System.out.println(v.tp.toString() + ", val = " + v.val);
+        if (l != null) {
+            l.print();
+        }
+        if (r != null){
+            r.print();
         }
     }
-    public Node (Type tp, Node l, Node r, float val){
-        this.tp = tp;
-        this.l = l;
-        this.r = r;
-        this.val = val;
+
+    public Type getType(){
+        return v.tp;
     }
-    public Node (Type tp, Node l, Node r){
-        this.tp = tp;
+
+    public float getValue(){
+        return v.val;
+    }
+
+    public Node (Token v, Node l, Node r){
+        this.v = new Token(v);
         this.l = l;
         this.r = r;
-        this.val = 0;
     }
 }
