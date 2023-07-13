@@ -43,11 +43,22 @@ public class Lexer {
             pos--;
             float val = getNumericValue();
             return new Token(val);
+        } else if (Character.isLetter(c)) {
+            pos--;
+            String name = getVariableName();
+            return new Token(name);
         } else {
             throw new UnexpectedTokenException(pos, s.substring(pos, pos+1), "expression");
         }
     }
-
+    private String getVariableName() {
+        String name = "";
+        while (pos < s.length() && (Character.isLetter(s.charAt(pos)) || Character.isDigit(s.charAt(pos)))){
+            name += s.charAt(pos);
+            pos++;
+        }
+        return name;
+    }
     private float getNumericValue() {
         String numStr = "";
         //System.out.println(s + " " + pos.intValue());

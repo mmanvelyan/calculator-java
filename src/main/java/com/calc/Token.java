@@ -10,6 +10,10 @@ public class Token {
         this.val = t.val;
         this.name = t.name;
     }
+    Token (String s){
+        this.tp = Type.VAR;
+        this.name = s;
+    }
     Token (Type tp) {
         this.tp = tp;
     }

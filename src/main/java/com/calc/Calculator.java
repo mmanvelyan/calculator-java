@@ -6,9 +6,14 @@ import static com.calc.Type.*;
 
 public class Calculator {
 
-    static Token nxt;
+    Token nxt;
+    Variables variables;
 
-    static Node parseNumber(Lexer lex){
+    Calculator(){
+        variables = new Variables();
+    }
+
+    Node parseNumber(Lexer lex){
         //System.out.println("parseNumberBegin : " + s + " " + pos);
         int br = 0;
         int beginIdx = lex.pos;
@@ -29,7 +34,7 @@ public class Calculator {
                 if (br < 0){
                     throw new UnexpectedTokenException(lex.pos,  "')'", "NUM", "(");
                 }
-            } else if (br == 0 && nxt.tp == Type.NUM){
+            } else if ((br == 0) && ((nxt.tp == Type.NUM) || (nxt.tp == Type.VAR))){
                 return new Node(nxt, null, null);
             } else if (br == 0) {
                 throw new UnexpectedTokenException(lex.pos, nxt.tp.toString(), "NUM", "(");
@@ -42,7 +47,7 @@ public class Calculator {
             throw new UnexpectedTokenException(lex.pos, nxt.tp.toString(), ")");
         }
     }
-    static Node parseMulDiv(Lexer lex, int endIdx){
+    Node parseMulDiv(Lexer lex, int endIdx){
         //System.out.println("parseMulDivBegin : " + s + " " + pos + " " + endIdx);
         Node expr = parseNumber(lex);
         if (lex.pos < endIdx){
@@ -70,7 +75,7 @@ public class Calculator {
         }
         return expr;
     }
-    static Node parseAddSub(Lexer lex, int beginIdx, int endIdx){
+    Node parseAddSub(Lexer lex, int beginIdx, int endIdx){
         //System.out.println("parseAddSubBegin : " + s + " " + beginIdx + " " + endIdx);
         if (beginIdx == endIdx){
             throw new UnexpectedTokenException(beginIdx, "", "expression");
@@ -92,19 +97,25 @@ public class Calculator {
     }
 
 
-    public static float calculate(String s){
-        s = s.replace(" ", "");
+    public float calculate(String s){
         Lexer lex = new Lexer(s, 0);
         Node tree = parseAddSub(lex, 0, s.length());
         //tree.print(tree, 1);
-        return tree.eval();
+        return tree.eval(variables);
     }
+}
 
+class Program{
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
+        Calculator calc = new Calculator();
         while (in.hasNextLine()) {
             String s = in.nextLine();
-            System.out.println(calculate(s));
+            s = s.replace(" ", "");
+            if (calc.variables.createVariable(calc, s)){
+                continue;
+            }
+            System.out.println(calc.calculate(s));
         }
     }
 }
