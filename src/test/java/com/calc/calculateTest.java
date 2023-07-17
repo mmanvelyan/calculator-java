@@ -3,6 +3,7 @@ package com.calc;
 import com.calc.Calculator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.omg.CORBA.portable.ApplicationException;
 
 public class calculateTest {
 
@@ -68,6 +69,33 @@ public class calculateTest {
     }
 
     @Test
+    public void correctPosition() {
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("(2 +3 ) 4"));
+        Assertions.assertEquals("pos 8", thrown.getMessage().substring(0, 5));
+    }
+
+    @Test
+    public void correctPositionBrackets() {
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("2 + (4 - + 5)"));
+        Assertions.assertEquals("pos 9", thrown.getMessage().substring(0, 5));
+    }
+    @Test
+    public void correctPositionVariableName() {
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("x 2 = 5"));
+        Assertions.assertEquals("pos 2", thrown.getMessage().substring(0, 5));
+    }
+    @Test
+    public void correctPositionVariableNameDigitFirst() {
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("2x = 5"));
+        Assertions.assertEquals("pos 1", thrown.getMessage().substring(0, 5));
+    }
+    @Test
+    public void correctPositionVariableValue() {
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("x = 3+*4"));
+        Assertions.assertEquals("pos 6", thrown.getMessage().substring(0, 5));
+    }
+
+    @Test
     public void divOrder() {
         Assertions.assertEquals(0.25, calc.calculate("1/2/2"));
     }
@@ -99,5 +127,7 @@ public class calculateTest {
         Assertions.assertEquals(93.0, calc.calculate("70-(81-39)/7+6*7-90/5+85/17"));
         Assertions.assertEquals(-210.0, calc.calculate("(900-250+140)-(400+900/3-200)-500"));
     }
+
+
 
 }

@@ -10,7 +10,8 @@ public enum Type {
     DIV("/"),
     OPEN_BR("("),
     CLOSING_BR(")"),
-    END("END");
+    END("END"),
+    EQ("=");
 
     final private String description;
     Type(String description){

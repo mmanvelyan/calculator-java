@@ -5,7 +5,6 @@ public class UnexpectedTokenException extends RuntimeException {
         super("pos " + pos + " : expected " + exp + ", got '" + got + "';");
     }
     public UnexpectedTokenException(int pos, String got, String... exp) {
-
         String expects = "";
         for (String s : exp){
             expects = expects + "'" + s + "' or ";

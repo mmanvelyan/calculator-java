@@ -6,11 +6,11 @@ public class Lexer {
     String s;
     int pos;
     int prevPos;
-    /*
-    public Lexer(String s){
-        this.s = s;
+
+    public Lexer(Lexer lex){
+        this.s = lex.s;
+        this.pos = lex.pos;
     }
-    */
 
     public Lexer(String s, int pos){
         this.s = s;
@@ -27,7 +27,11 @@ public class Lexer {
         char c = s.charAt(pos);
         prevPos = pos;
         pos++;
-        if (c == '('){
+        if (c == ' '){
+            return nextToken();
+        } else if (c == '='){
+            return new Token(Type.EQ);
+        } else if (c == '('){
             return new Token(Type.OPEN_BR);
         } else if (c == ')'){
             return new Token(Type.CLOSING_BR);
@@ -51,12 +55,27 @@ public class Lexer {
             throw new UnexpectedTokenException(pos, s.substring(pos, pos+1), "expression");
         }
     }
+
+    private void checkName(String s){
+        if (s.length() == 0){
+            throw new UnexpectedTokenException(0, "=", "variable name");
+        }
+        if (!Character.isLetter(s.charAt(0))){
+            throw new UnexpectedTokenException(0, s.substring(0, 1), "letter");
+        }
+        for (int i = 1; i < s.length(); i++){
+            if (!Character.isLetter(s.charAt(i)) && !Character.isDigit(s.charAt(i))){
+                throw new UnexpectedTokenException(i, s.substring(i, i+1), "letter or digit");
+            }
+        }
+    }
     private String getVariableName() {
         String name = "";
         while (pos < s.length() && (Character.isLetter(s.charAt(pos)) || Character.isDigit(s.charAt(pos)))){
             name += s.charAt(pos);
             pos++;
         }
+        checkName(name);
         return name;
     }
     private float getNumericValue() {
