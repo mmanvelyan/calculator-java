@@ -11,7 +11,7 @@ public enum Type {
     OPEN_BR("("),
     CLOSING_BR(")"),
     END("END"),
-    EQ("=");
+    ASS("=");
 
     final private String description;
     Type(String description){

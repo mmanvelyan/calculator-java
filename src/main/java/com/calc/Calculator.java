@@ -1,93 +1,103 @@
 package com.calc;
 
-import java.util.Scanner;
+import java.util.Objects;
 import java.util.logging.*;
-
 
 import static com.calc.Type.*;
 
 public class Calculator {
 
-    private static Logger log = Logger.getLogger(Calculator.class.getName());
+    private static final Logger log = Logger.getLogger(Calculator.class.getName());
 
-    Token nxt;
-    Variables variables;
+
+    private final Variables variables;
 
     Calculator(){
         variables = new Variables();
+        try {
+            LogManager.getLogManager().reset();
+            FileHandler fh = new FileHandler("C:/Users/mmanv/Documents/GitHub/calculator/CalculatorLog.log");
+            log.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    Node parseNumber(Lexer lex){
-        log.info("parseNumberBegin : " + lex.s + " " + lex.pos);
+    private Node parseNumber(Lexer lex){
+        log.info("parseNumberBegin : " + lex.getS() + " " + lex.getPos());
         int br = 0;
-        int beginIdx = lex.pos;
-        nxt = lex.nextToken();
-        if (nxt.tp == Type.SUB){
+        int beginIdx = lex.getPos();
+        Token nxt = lex.nextToken();
+        if (nxt.getTp() == Type.SUB){
             return new Node(nxt, new Node(new Token(Type.NUM, 0), null, null), parseNumber(lex));
         } else {
             lex.prevToken();
         }
         do {
             nxt = lex.nextToken();
-            if (nxt.tp == Type.OPEN_BR){
+            if (nxt.getTp() == Type.OPEN_BR){
                 br++;
-            } else if (nxt.tp == Type.CLOSING_BR){
+            } else if (nxt.getTp() == Type.CLOSING_BR){
                 br--;
                 if (br < 0){
-                    throw new UnexpectedTokenException(lex.pos-1,  "')'", "NUM", "(");
+                    throw new UnexpectedTokenException(lex.getS(), lex.getPos()-1,  "')'", "NUM", "(");
                 }
-            } else if ((br == 0) && ((nxt.tp == Type.NUM) || (nxt.tp == Type.VAR))){
+            } else if ((br == 0) && ((nxt.getTp() == Type.NUM) || (nxt.getTp() == Type.VAR))){
+                if (nxt.getTp() == Type.VAR && Objects.isNull(variables.getValue(nxt.getName()))){
+                    throw new UnexpectedTokenException(lex.getS(), lex.getPos()-1, nxt.getName(), "existing variable name");
+                }
                 return new Node(nxt, null, null);
             } else if (br == 0) {
-                throw new UnexpectedTokenException(lex.pos-1, nxt.tp.toString(), "NUM", "(");
+                throw new UnexpectedTokenException(lex.getS(), lex.getPos()-1, nxt.getTp().toString(), "NUM", "(");
             }
-        } while (br != 0 && nxt.tp != Type.END);
+        } while (br != 0 && nxt.getTp() != Type.END);
         if (br == 0) {
-            return parseAddSub(new Lexer(lex), beginIdx + 1, lex.pos - 1);
+            return parseAddSub(new Lexer(lex), beginIdx + 1, lex.getPos() - 1);
         } else {
-            throw new UnexpectedTokenException(lex.pos, nxt.tp.toString(), ")");
+            throw new UnexpectedTokenException(lex.getS(), lex.getPos(), nxt.getTp().toString(), ")");
         }
     }
-    Node parseMulDiv(Lexer lex, int endIdx){
-        log.info("parseMulDivBegin : " + lex.s + " " + lex.pos + " " + endIdx);
+    private Node parseMulDiv(Lexer lex, int endIdx){
+        log.info("parseMulDivBegin : " + lex.getS() + " " + lex.getPos() + " " + endIdx);
         Node expr = parseNumber(lex);
-        nxt = lex.nextToken();
-        if (lex.pos > endIdx){
+        Token nxt = lex.nextToken();
+        if (lex.getPos() > endIdx){
             lex.prevToken();
             nxt = new Token(END);
         }
-        while (nxt.tp == Type.MUL || nxt.tp == Type.DIV){
-            Type curType = nxt.tp;
+        while (nxt.getTp() == Type.MUL || nxt.getTp() == Type.DIV){
+            Type curType = nxt.getTp();
             Node next = parseNumber(lex);
             expr = new Node(new Token(curType), expr, next);
             nxt = lex.nextToken();
-            if (lex.pos > endIdx){
+            if (lex.getPos() > endIdx){
                 nxt = new Token(END);
                 lex.prevToken();
                 break;
             }
         }
-        if (nxt.tp == Type.ADD || nxt.tp == Type.SUB){
+        if (nxt.getTp() == Type.ADD || nxt.getTp() == Type.SUB){
             lex.prevToken();
-        } else if (nxt.tp != Type.END){
-            throw new UnexpectedTokenException(lex.pos-1,  nxt.tp.toString(), "+", "-", "END");
+        } else if (nxt.getTp() != Type.END){
+            throw new UnexpectedTokenException(lex.getS(), lex.getPos()-1,  nxt.getTp().toString(), "+", "-", "END");
         }
         return expr;
     }
-    Node parseAddSub(Lexer lex, int beginIdx, int endIdx){
-        log.info("parseAddSubBegin : " + lex.s + " " + beginIdx + " " + endIdx);
+    private Node parseAddSub(Lexer lex, int beginIdx, int endIdx){
+        log.info("parseAddSubBegin : " + lex.getS() + " " + beginIdx + " " + endIdx);
         if (beginIdx == endIdx){
-            throw new UnexpectedTokenException(beginIdx, "", "expression");
+            throw new UnexpectedTokenException(lex.getS(), beginIdx, "", "expression");
         }
-        lex.pos = beginIdx;
-        nxt = new Token();
+        lex.setPos(beginIdx);
         Node expr = parseMulDiv(lex, endIdx);
-        nxt = lex.nextToken();
-        while (nxt.tp == ADD || nxt.tp == Type.SUB){
-            Type curType = nxt.tp;
+        Token nxt = lex.nextToken();
+        while (nxt.getTp() == ADD || nxt.getTp() == Type.SUB){
+            Type curType = nxt.getTp();
             Node next = parseMulDiv(lex, endIdx);
             nxt = lex.nextToken();
-            if (lex.pos > endIdx){
+            if (lex.getPos() > endIdx){
                 lex.prevToken();
             }
             expr = new Node(new Token(curType), expr, next);
@@ -95,16 +105,16 @@ public class Calculator {
         return expr;
     }
 
-    Node parseVariable(Lexer lex){
+    private Node parseVariable(Lexer lex){
         Token varName = lex.nextToken();
-        nxt = lex.nextToken();
-        if (varName.tp != Type.VAR || nxt.tp != Type.EQ){
-            return parseAddSub(new Lexer(lex.s, 0), 0, lex.s.length());
+        Token nxt = lex.nextToken();
+        if (varName.getTp() != Type.VAR || nxt.getTp() != Type.ASS){
+            return parseAddSub(new Lexer(lex.getS(), 0), 0, lex.getS().length());
         }
-        return new Node(nxt, new Node(varName, null, null), parseAddSub(lex, lex.pos, lex.s.length()));
+        return new Node(nxt, new Node(varName, null, null), parseAddSub(lex, lex.getPos(), lex.getS().length()));
     }
 
-    public float calculate(String s){
+    public EvalResult calculate(String s){
         Lexer lex = new Lexer(s, 0);
         Eval e = new Eval();
         Node tree = parseVariable(lex);
@@ -112,13 +122,3 @@ public class Calculator {
     }
 }
 
-class Program{
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-        Calculator calc = new Calculator();
-        while (in.hasNextLine()) {
-            String s = in.nextLine();
-            System.out.println(calc.calculate(s));
-        }
-    }
-}

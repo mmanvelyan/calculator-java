@@ -6,10 +6,7 @@ import java.util.Map;
 public class Variables {
     private final Map<String, Float> values = new HashMap<>();
 
-    public float getValue(String name){
-        if (values.get(name) == null){
-            throw new UnexpectedTokenException(0, name, "variable name");
-        }
+    public Float getValue(String name){
         return values.get(name);
     }
 

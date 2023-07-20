@@ -1,10 +1,9 @@
 package com.calc;
 
 public class Token {
-    public Type tp;
-    public String name;
-    public float val;
-    Token () {}
+    private final Type tp;
+    private String name;
+    private float val;
     Token (Token t){
         this.tp = t.tp;
         this.val = t.val;
@@ -25,13 +24,18 @@ public class Token {
         this.tp = Type.NUM;
         this.val = val;
     }
-    /*
-    Token (String name, float val){
-        this.tp = Type.VAR;
-        this.val = val;
-        this.name = name;
+
+    public Type getTp() {
+        return tp;
     }
-    */
+
+    public String getName() {
+        return name;
+    }
+
+    public float getVal() {
+        return val;
+    }
 }
 
 
