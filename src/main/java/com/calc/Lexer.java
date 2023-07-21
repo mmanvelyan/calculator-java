@@ -4,17 +4,19 @@ import static com.calc.Type.*;
 
 public class Lexer {
     private final String s;
-    private int pos, prevPos;
+    private int pos;
+    private final LexerPrevTokens prevTokens;
 
     public Lexer(Lexer lex){
         this.s = lex.s;
         this.pos = lex.pos;
-        this.prevPos = lex.prevPos;
+        this.prevTokens = new LexerPrevTokens(lex.prevTokens);
     }
 
     public Lexer(String s, int pos){
         this.s = s;
         this.pos = pos;
+        this.prevTokens = new LexerPrevTokens(pos);
     }
     public String getS(){
         return s;
@@ -23,51 +25,57 @@ public class Lexer {
     public int getPos(){
         return pos;
     }
-    public void setPos(int pos){
-        this.prevPos = this.pos;
-        this.pos = pos;
+
+    public void returnToPrevPos(){
+        pos = prevTokens.returnToPrevPos();
     }
 
-    public void prevToken(){
-        pos = prevPos;
-    }
     public Token nextToken(){
+        Token nxt;
         if (pos >= s.length()){
-            return new Token(Type.END);
+            nxt = new Token(Type.END);
+            prevTokens.addToken(nxt, pos);
+            return nxt;
         }
         char c = s.charAt(pos);
-        prevPos = pos;
         pos++;
         while (c == ' '){
+            if (pos >= s.length()){
+                nxt = new Token(Type.END);
+                prevTokens.addToken(nxt, pos);
+                return nxt;
+            }
             c = s.charAt(pos);
-            prevPos++;
             pos++;
         }
         if (c == '='){
-            return new Token(Type.ASS);
+            nxt = new Token(Type.ASS);
         } else if (c == '('){
-            return new Token(Type.OPEN_BR);
+            nxt = new Token(Type.OPEN_BR);
         } else if (c == ')'){
-            return new Token(Type.CLOSING_BR);
+            nxt = new Token(Type.CLOSING_BR);
         } else if (c == '+'){
-            return new Token(ADD);
+            nxt = new Token(ADD);
         } else if (c == '-'){
-            return new Token(Type.SUB);
+            nxt = new Token(Type.SUB);
         } else if (c == '*'){
-            return new Token(Type.MUL);
+            nxt = new Token(Type.MUL);
         } else if (c == '/'){
-            return new Token(Type.DIV);
+            nxt = new Token(Type.DIV);
         } else if (Character.isDigit(c)){
             pos--;
             float val = getNumericValue();
-            return new Token(val);
+            nxt = new Token(val);
         } else if (Character.isLetter(c)) {
             pos--;
             String name = getVariableName();
-            return new Token(name);
+            nxt = new Token(name);
         } else {
             throw new UnexpectedTokenException(s, pos, s.substring(pos, pos+1), "expression");
         }
+
+        prevTokens.addToken(nxt, pos);
+        return nxt;
     }
 
     private String getVariableName() {
@@ -85,3 +93,4 @@ public class Lexer {
         return Float.parseFloat(s.substring(begPos, pos));
     }
 }
+

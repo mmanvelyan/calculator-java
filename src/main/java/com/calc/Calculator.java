@@ -33,12 +33,13 @@ public class Calculator {
         if (nxt.getTp() == Type.SUB){
             return new Node(nxt, new Node(new Token(Type.NUM, 0), null, null), parseNumber(lex));
         } else {
-            lex.prevToken();
+            lex.returnToPrevPos();
         }
         do {
             nxt = lex.nextToken();
             if (nxt.getTp() == Type.OPEN_BR){
                 br++;
+                beginIdx = lex.getPos();
             } else if (nxt.getTp() == Type.CLOSING_BR){
                 br--;
                 if (br < 0){
@@ -54,7 +55,7 @@ public class Calculator {
             }
         } while (br != 0 && nxt.getTp() != Type.END);
         if (br == 0) {
-            return parseAddSub(new Lexer(lex), beginIdx + 1, lex.getPos() - 1);
+            return parseAddSub(new Lexer(lex.getS(), beginIdx), beginIdx, lex.getPos() - 1);
         } else {
             throw new UnexpectedTokenException(lex.getS(), lex.getPos(), nxt.getTp().toString(), ")");
         }
@@ -64,7 +65,7 @@ public class Calculator {
         Node expr = parseNumber(lex);
         Token nxt = lex.nextToken();
         if (lex.getPos() > endIdx){
-            lex.prevToken();
+            lex.returnToPrevPos();
             nxt = new Token(END);
         }
         while (nxt.getTp() == Type.MUL || nxt.getTp() == Type.DIV){
@@ -74,23 +75,22 @@ public class Calculator {
             nxt = lex.nextToken();
             if (lex.getPos() > endIdx){
                 nxt = new Token(END);
-                lex.prevToken();
+                lex.returnToPrevPos();
                 break;
             }
         }
         if (nxt.getTp() == Type.ADD || nxt.getTp() == Type.SUB){
-            lex.prevToken();
+            lex.returnToPrevPos();
         } else if (nxt.getTp() != Type.END){
             throw new UnexpectedTokenException(lex.getS(), lex.getPos()-1,  nxt.getTp().toString(), "+", "-", "END");
         }
         return expr;
     }
     private Node parseAddSub(Lexer lex, int beginIdx, int endIdx){
-        log.info("parseAddSubBegin : " + lex.getS() + " " + beginIdx + " " + endIdx);
+        log.info("parseAddSubBegin : " + lex.getS() + " " + beginIdx + " " + endIdx + lex.getS().substring(beginIdx, endIdx));
         if (beginIdx == endIdx){
             throw new UnexpectedTokenException(lex.getS(), beginIdx, "", "expression");
         }
-        lex.setPos(beginIdx);
         Node expr = parseMulDiv(lex, endIdx);
         Token nxt = lex.nextToken();
         while (nxt.getTp() == ADD || nxt.getTp() == Type.SUB){
@@ -98,7 +98,7 @@ public class Calculator {
             Node next = parseMulDiv(lex, endIdx);
             nxt = lex.nextToken();
             if (lex.getPos() > endIdx){
-                lex.prevToken();
+                lex.returnToPrevPos();
             }
             expr = new Node(new Token(curType), expr, next);
         }
