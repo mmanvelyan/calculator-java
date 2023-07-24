@@ -1,32 +1,32 @@
 package com.calc;
 
 public class Token {
-    private final Type tp;
+    private final Type type;
     private String name;
     private float val;
     Token (Token t){
-        this.tp = t.tp;
+        this.type = t.type;
         this.val = t.val;
         this.name = t.name;
     }
     Token (String s){
-        this.tp = Type.VAR;
+        this.type = Type.VAR;
         this.name = s;
     }
-    Token (Type tp) {
-        this.tp = tp;
+    Token (Type type) {
+        this.type = type;
     }
-    Token (Type tp, float val){
-        this.tp = tp;
+    Token (Type type, float val){
+        this.type = type;
         this.val = val;
     }
     Token (float val){
-        this.tp = Type.NUM;
+        this.type = Type.NUM;
         this.val = val;
     }
 
-    public Type getTp() {
-        return tp;
+    public Type getType() {
+        return type;
     }
 
     public String getName() {

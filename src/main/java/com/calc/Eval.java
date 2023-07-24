@@ -7,26 +7,30 @@ public class Eval{
         Token v = n.getToken();
         Node l = n.getL();
         Node r = n.getR();
-        if (v.getTp() == Type.ASS){
-            variables.createVariable(l.getToken().getName(), eval(r, variables).getRes());
-            return new EvalResult("Variable "+l.getToken().getName()+" is set to "+ variables.getValue(l.getToken().getName()));
+        if (v.getType() == Type.ASS){
+            float value = eval(r, variables).getRes();
+            variables.createVariable(l.getToken().getName(), value);
+            return new EvalResult(value);
         }
-        if (v.getTp() == Type.VAR){
+        if (v.getType() == Type.VAR){
+            if (variables.getValue(v.getName()) == null){
+                return null;
+            }
             return new EvalResult(variables.getValue(v.getName()));
         }
-        if (v.getTp() == Type.NUM){
+        if (v.getType() == Type.NUM){
             return new EvalResult(v.getVal());
         }
-        if (v.getTp() == ADD){
+        if (v.getType() == ADD){
             return new EvalResult(eval(l, variables).getRes()+eval(r, variables).getRes());
         }
-        if (v.getTp() == Type.SUB){
+        if (v.getType() == Type.SUB){
             return new EvalResult(eval(l, variables).getRes()-eval(r, variables).getRes());
         }
-        if (v.getTp() == Type.MUL){
+        if (v.getType() == Type.MUL){
             return new EvalResult(eval(l, variables).getRes()*eval(r, variables).getRes());
         }
-        if (v.getTp() == Type.DIV) {
+        if (v.getType() == Type.DIV) {
             float rEval = eval(r, variables).getRes();
             if (rEval == 0) {
                 throw new ArithmeticException("/ by 0");

@@ -2,12 +2,12 @@ package com.calc;
 
 public class Output {
     public static void printToken(Token v){
-        if (v.getTp() == Type.NUM){
+        if (v.getType() == Type.NUM){
             System.out.print(v.getVal());
-        } else if (v.getTp() == Type.VAR){
+        } else if (v.getType() == Type.VAR){
             System.out.print(v.getName());
         } else {
-            System.out.print(v.getTp().toString());
+            System.out.print(v.getType().toString());
         }
         System.out.print(" ");
     }

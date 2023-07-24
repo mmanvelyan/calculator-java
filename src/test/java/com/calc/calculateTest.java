@@ -80,7 +80,7 @@ public class calculateTest {
     @Test
     public void correctPositionVariableName() {
         UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("x 2 = 5"));
-        Assertions.assertEquals(0, thrown.getPos());
+        Assertions.assertEquals(2, thrown.getPos());
     }
     @Test
     public void correctPositionVariableNameDigitFirst() {

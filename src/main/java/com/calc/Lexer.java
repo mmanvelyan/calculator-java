@@ -73,7 +73,6 @@ public class Lexer {
         } else {
             throw new UnexpectedTokenException(s, pos, s.substring(pos, pos+1), "expression");
         }
-
         prevTokens.addToken(nxt, pos);
         return nxt;
     }
