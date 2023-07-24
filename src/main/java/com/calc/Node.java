@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class Node {
     private final Node l, r;
-    private final Token v;
+    private final Token token;
 
     public Token getToken(){
-        return v;
+        return token;
     }
 
     public Node getL(){
@@ -20,7 +20,7 @@ public class Node {
 
     public Node (ArrayList<Node> a, Token t){
         if (a.size() == 1){
-            this.v = a.get(0).v;
+            this.token = a.get(0).token;
             this.l = a.get(0).l;
             this.r = a.get(0).r;
             return;
@@ -32,12 +32,13 @@ public class Node {
             x = new Node(t, a.get(idx), x);
             idx--;
         }
-        this.v = x.v;
+        this.token = x.token;
         this.l = x.l;
         this.r = x.r;
     }
-    public Node (Token v, Node l, Node r){
-        this.v = new Token(v);
+
+    public Node (Token token, Node l, Node r){
+        this.token = new Token(token);
         this.l = l;
         this.r = r;
     }

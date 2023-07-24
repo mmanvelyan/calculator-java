@@ -13,14 +13,11 @@ public class LexerPrevTokens {
         prevTokens.add(new Token(Type.END));
     }
 
-    public LexerPrevTokens(LexerPrevTokens l){
-        prevTokens = new ArrayList<>(l.prevTokens);
-        prevPos = new ArrayList<>(l.prevPos);
-    }
     public void addToken(Token t, int pos){
         prevTokens.add(t);
         prevPos.add(pos);
     }
+
     public int returnToPrevPos(){
         prevTokens.remove(prevTokens.size()-1);
         prevPos.remove(prevPos.size()-1);

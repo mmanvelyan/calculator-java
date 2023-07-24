@@ -8,7 +8,11 @@ public class Program {
         Calculator calc = new Calculator();
         while (in.hasNextLine()) {
             String s = in.nextLine();
-            Output.printResult(calc.calculate(s));
+            try {
+                Output.printResult(calc.calculate(s));
+            } catch (UnexpectedTokenException e) {
+                continue;
+            }
         }
     }
 }

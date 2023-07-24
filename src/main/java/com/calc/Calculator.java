@@ -1,7 +1,6 @@
 package com.calc;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.logging.*;
 
 import static com.calc.Type.*;
@@ -39,7 +38,7 @@ public class Calculator {
     }
 
     private Node parseNumber(Lexer lex){
-        log.info("parseNumberBegin : " + lex.getS() + " " + lex.getPos());
+        log.info("parseNumberBegin : " + lex.getString() + " " + lex.getPos());
         Token nxt = lex.nextToken();
         if (nxt.getType() == SUB){
             return new Node(new Token(SUB), new Node(new Token(0), null, null), parseNumber(lex));
@@ -47,17 +46,17 @@ public class Calculator {
             Node expression = parseExpression(lex);
             nxt = lex.nextToken();
             if (nxt.getType() != CLOSING_BR){
-                throw new UnexpectedTokenException(lex.getS(), lex.getPos()-1, nxt.getType().toString(), ")");
+                throw new UnexpectedTokenException(lex.getPos()-1, nxt.getType().toString(), ")");
             }
             return expression;
         } else if (nxt.getType() == NUM || nxt.getType() == VAR) {
             return new Node(nxt, null, null);
         } else {
-            throw new UnexpectedTokenException(lex.getS(), lex.getPos()-1, nxt.getType().toString(), "(", "NUM", "VAR");
+            throw new UnexpectedTokenException(lex.getPos()-1, nxt.getType().toString(), "(", "NUM", "VAR");
         }
     }
     private Node parseFactor(Lexer lex){
-        log.info("parseMulDivBegin : " + lex.getS() + " " + lex.getPos());
+        log.info("parseMulDivBegin : " + lex.getString() + " " + lex.getPos());
         Node factor = parseNumber(lex);
         Token nxt = lex.nextToken();
         while (nxt.getType() == MUL || nxt.getType() == DIV){
@@ -73,13 +72,13 @@ public class Calculator {
             lex.returnToPrevPos();
             return factor;
         } else if (nxt.getType() != END){
-            throw new UnexpectedTokenException(lex.getS(), lex.getPos()-1, nxt.getType().toString(), "MUL", "DIV");
+            throw new UnexpectedTokenException(lex.getPos()-1, nxt.getType().toString(), "MUL", "DIV");
         }
         return factor;
     }
 
     private Node parseTerm(Lexer lex){
-        log.info("parseAddSubBegin : " + lex.getS() + " " + lex.getPos());
+        log.info("parseAddSubBegin : " + lex.getString() + " " + lex.getPos());
         Node term = parseFactor(lex);
         Token nxt = lex.nextToken();
         while (nxt.getType() == ADD || nxt.getType() == SUB){
@@ -95,13 +94,13 @@ public class Calculator {
             lex.returnToPrevPos();
             return term;
         } else if (nxt.getType() != END){
-            throw new UnexpectedTokenException(lex.getS(), lex.getPos()-1, nxt.getType().toString(), "ADD", "SUB");
+            throw new UnexpectedTokenException(lex.getPos()-1, nxt.getType().toString(), "ADD", "SUB");
         }
         return term;
     }
 
     private Node parseExpression(Lexer lex){
-        log.info("parseVariableBegin : " + lex.getS() + " " + lex.getPos());
+        log.info("parseVariableBegin : " + lex.getString() + " " + lex.getPos());
         ArrayList<Node> terms = new ArrayList<>();
         terms.add(parseTerm(lex));
         Token nxt = lex.nextToken();
@@ -118,7 +117,7 @@ public class Calculator {
             lex.returnToPrevPos();
             return new Node(terms, new Token(ASS));
         } else if (nxt.getType() != END){
-            throw new UnexpectedTokenException(lex.getS(), lex.getPos()-1, nxt.getType().toString(), "END");
+            throw new UnexpectedTokenException(lex.getPos()-1, nxt.getType().toString(), "END");
         }
         return new Node(terms, new Token(ASS));
     }
@@ -128,7 +127,7 @@ public class Calculator {
         Node tree = parseExpression(lex);
         Token nxt = lex.nextToken();
         if (nxt.getType() != END){
-            throw new UnexpectedTokenException(lex.getS(), lex.getPos(), nxt.getType().toString(), "END");
+            throw new UnexpectedTokenException(lex.getPos()-1, nxt.getType().toString(), "END");
         }
         return tree;
     }

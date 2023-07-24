@@ -7,18 +7,13 @@ public class Lexer {
     private int pos;
     private final LexerPrevTokens prevTokens;
 
-    public Lexer(Lexer lex){
-        this.s = lex.s;
-        this.pos = lex.pos;
-        this.prevTokens = new LexerPrevTokens(lex.prevTokens);
-    }
-
     public Lexer(String s, int pos){
         this.s = s;
         this.pos = pos;
         this.prevTokens = new LexerPrevTokens(pos);
     }
-    public String getS(){
+
+    public String getString(){
         return s;
     }
 
@@ -48,30 +43,40 @@ public class Lexer {
             c = s.charAt(pos);
             pos++;
         }
-        if (c == '='){
-            nxt = new Token(Type.ASS);
-        } else if (c == '('){
-            nxt = new Token(Type.OPEN_BR);
-        } else if (c == ')'){
-            nxt = new Token(Type.CLOSING_BR);
-        } else if (c == '+'){
-            nxt = new Token(ADD);
-        } else if (c == '-'){
-            nxt = new Token(Type.SUB);
-        } else if (c == '*'){
-            nxt = new Token(Type.MUL);
-        } else if (c == '/'){
-            nxt = new Token(Type.DIV);
-        } else if (Character.isDigit(c)){
-            pos--;
-            float val = getNumericValue();
-            nxt = new Token(val);
-        } else if (Character.isLetter(c)) {
-            pos--;
-            String name = getVariableName();
-            nxt = new Token(name);
-        } else {
-            throw new UnexpectedTokenException(s, pos, s.substring(pos, pos+1), "expression");
+        switch (c){
+            case '=':
+                nxt = new Token(Type.ASS);
+                break;
+            case '(':
+                nxt = new Token(Type.OPEN_BR);
+                break;
+            case ')':
+                nxt = new Token(Type.CLOSING_BR);
+                break;
+            case '+':
+                nxt = new Token(ADD);
+                break;
+            case '-':
+                nxt = new Token(Type.SUB);
+                break;
+            case '*':
+                nxt = new Token(Type.MUL);
+                break;
+            case  '/':
+                nxt = new Token(Type.DIV);
+                break;
+            default:
+                if (Character.isDigit(c)){
+                    pos--;
+                    float val = getNumericValue();
+                    nxt = new Token(val);
+                } else if (Character.isLetter(c)) {
+                    pos--;
+                    String name = getVariableName();
+                    nxt = new Token(name, pos-1);
+                } else {
+                    throw new UnexpectedTokenException(pos, s.substring(pos, pos+1), "expression");
+                }
         }
         prevTokens.addToken(nxt, pos);
         return nxt;

@@ -2,27 +2,33 @@ package com.calc;
 
 public class Token {
     private final Type type;
-    private String name;
-    private float val;
+    private final String name;
+    private final int pos;
+    private final float val;
+
+    Token (Type type, String name, int pos, float val){
+        this.type = type;
+        this.name = name;
+        this.pos = pos;
+        this.val = val;
+    }
     Token (Token t){
-        this.type = t.type;
-        this.val = t.val;
-        this.name = t.name;
+        this(t.type, t.name, t.pos, t.val);
     }
     Token (String s){
-        this.type = Type.VAR;
-        this.name = s;
+        this(Type.VAR, s, 0, 0);
     }
+
+    Token (String s, int pos){
+        this(Type.VAR, s, pos, 0);
+    }
+
     Token (Type type) {
-        this.type = type;
+        this(type, "", 0, 0);
     }
-    Token (Type type, float val){
-        this.type = type;
-        this.val = val;
-    }
+
     Token (float val){
-        this.type = Type.NUM;
-        this.val = val;
+        this(Type.NUM, "", 0, val);
     }
 
     public Type getType() {
@@ -35,6 +41,10 @@ public class Token {
 
     public float getVal() {
         return val;
+    }
+
+    public int getPos(){
+        return pos;
     }
 }
 
