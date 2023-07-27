@@ -17,6 +17,13 @@ public class Program {
                 }
                 System.out.println("^");
                 System.out.println(e.getMessage());
+            } catch (UnexpectedVariableException e){
+                int pos = e.getPos();
+                for (int i = 0; i < pos; i++) {
+                    System.out.print(" ");
+                }
+                System.out.println("^");
+                System.out.println(e.getMessage());
             }
         }
     }
