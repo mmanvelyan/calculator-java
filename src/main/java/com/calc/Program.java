@@ -11,7 +11,12 @@ public class Program {
             try {
                 Output.printResult(calc.calculate(s));
             } catch (UnexpectedTokenException e) {
-                continue;
+                int pos = e.getPos();
+                for (int i = 0; i < pos; i++) {
+                    System.out.print(" ");
+                }
+                System.out.println("^");
+                System.out.println(e.getMessage());
             }
         }
     }

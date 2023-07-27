@@ -4,7 +4,7 @@
 4. Pattern Visitor
 5. logging
 6. Pattern Decorator
-7. UnexpectedTokenException - System.out, move to catch (UnexpectedTokenException)
+*7. UnexpectedTokenException - System.out, move to catch (UnexpectedTokenException)
 *8. Lexer Decorator
 8.1 PushBackLexerTest
 9. UnexpectedVariableException

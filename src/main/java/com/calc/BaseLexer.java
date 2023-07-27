@@ -14,13 +14,13 @@ public class BaseLexer implements Lexer {
     public Token nextToken(){
         Token nxt;
         if (pos >= s.length()){
-            return new Token(Type.END, pos-1);
+            return new Token(Type.END, pos);
         }
         char c = s.charAt(pos);
         pos++;
         while (c == ' '){
             if (pos >= s.length()){
-                return new Token(Type.END, pos-1);
+                return new Token(Type.END, pos);
             }
             c = s.charAt(pos);
             pos++;
