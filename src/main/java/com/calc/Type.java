@@ -11,7 +11,8 @@ public enum Type {
     OPEN_BR("("),
     CLOSING_BR(")"),
     END("END"),
-    ASS("=");
+    ASS("="),
+    INV("invalid symbol");
 
     final private String description;
     Type(String description){

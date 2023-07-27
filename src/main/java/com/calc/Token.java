@@ -15,9 +15,6 @@ public class Token {
     Token (Token t){
         this(t.type, t.name, t.pos, t.val);
     }
-    Token (String s){
-        this(Type.VAR, s, 0, 0);
-    }
 
     Token (String s, int pos){
         this(Type.VAR, s, pos, 0);
@@ -27,8 +24,16 @@ public class Token {
         this(type, "", 0, 0);
     }
 
+    Token (Type type, int pos) {
+        this(type, "", pos, 0);
+    }
+
     Token (float val){
         this(Type.NUM, "", 0, val);
+    }
+
+    Token (float val, int pos){
+        this(Type.NUM, "", pos, val);
     }
 
     public Type getType() {

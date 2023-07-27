@@ -14,7 +14,7 @@ public class Eval {
                 return new EvalResult(value);
             case VAR:
                 if (variables.getValue(token.getName()) == null) {
-                    throw new UnexpectedTokenException(token.getPos(), token.getName(), "assigned variable");
+                    throw new UnexpectedTokenException(token, "assigned variable");
                 }
                 return new EvalResult(variables.getValue(token.getName()));
             case NUM:

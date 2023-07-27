@@ -9,9 +9,9 @@ public class UnexpectedTokenException extends RuntimeException {
     public String getMessage(){
         return ("pos " + pos + " : expected " + exp + ", got '" + got + "';");
     }
-    public UnexpectedTokenException(int pos, String got, String exp) {
-        this.pos = pos;
-        this.got = got;
+    public UnexpectedTokenException(Token got, String exp) {
+        this.pos = got.getPos();
+        this.got = got.getType().toString();
         this.exp = exp;
         for (int i = 0; i < pos; i++) {
             System.out.print(" ");
@@ -19,14 +19,14 @@ public class UnexpectedTokenException extends RuntimeException {
         System.out.println("^");
         System.out.println(getMessage());
     }
-    public UnexpectedTokenException(int pos, String got, String... exp) {
+    public UnexpectedTokenException(Token got, String... exp) {
         String expects = "";
         for (String q : exp){
             expects = expects + "'" + q + "' or ";
         }
         expects = expects.substring(0, expects.length()-4);
-        this.pos = pos;
-        this.got = got;
+        this.pos = got.getPos();
+        this.got = got.getType().toString();
         this.exp = expects;
         for (int i = 0; i < pos; i++) {
             System.out.print(" ");
@@ -35,3 +35,4 @@ public class UnexpectedTokenException extends RuntimeException {
         System.out.println(getMessage());
     }
 }
+
