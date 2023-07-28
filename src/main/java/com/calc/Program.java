@@ -24,6 +24,10 @@ public class Program {
                 }
                 System.out.println("^");
                 System.out.println(e.getMessage());
+            } catch (ArithmeticException e){
+                System.out.println(e.getMessage());
+            } catch (RollbackLevelException e){
+                System.out.println(e.getMessage());
             }
         }
     }

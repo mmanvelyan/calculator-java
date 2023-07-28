@@ -1,7 +1,6 @@
 package com.calc;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class PushBackLexer implements Lexer {
     private final Lexer lex;
