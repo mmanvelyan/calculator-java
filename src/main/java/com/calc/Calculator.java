@@ -100,9 +100,14 @@ public class Calculator {
         ArrayList<Node> terms = new ArrayList<>();
         terms.add(parseTerm(lex));
         Token nxt = lex.nextToken();
+        boolean flag = (terms.get(0).getToken().getType() != VAR);
         while (nxt.getType() == Type.ASS){
+            if (flag){
+                throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV", "END");
+            }
             Node term = parseTerm(lex);
             terms.add(term);
+            flag = (terms.get(terms.size()-1).getToken().getType() != VAR);
             nxt = lex.nextToken();
             if (nxt.getType() == CLOSING_BR){
                 lex.returnToPrevPos();

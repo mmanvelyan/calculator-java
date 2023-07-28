@@ -36,23 +36,36 @@ public class calculateTest {
     }
 
     @Test
+    public void ass() {
+        Assertions.assertEquals(5, calc.calculate("x=5").getRes());
+    }
+
+    @Test
     public void missingClosingBracket() {
-        Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("(2+3"));
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("(2+3"));
+        Assertions.assertEquals(4, thrown.getPos());
+        Assertions.assertEquals(Type.END, thrown.getToken().getType());
     }
 
     @Test
     public void numberBeforeBrackets() {
-        Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("2(3)"));
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("2(3)"));
+        Assertions.assertEquals(1, thrown.getPos());
+        Assertions.assertEquals(Type.OPEN_BR, thrown.getToken().getType());
     }
 
     @Test
     public void numberAfterBrackets() {
-        Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("(3)2"));
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("(3)2"));
+        Assertions.assertEquals(3, thrown.getPos());
+        Assertions.assertEquals(Type.NUM, thrown.getToken().getType());
     }
 
     @Test
     public void missingOpenBracket() {
-        Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("(2+3))"));
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("(2+3))"));
+        Assertions.assertEquals(5, thrown.getPos());
+        Assertions.assertEquals(Type.CLOSING_BR, thrown.getToken().getType());
     }
 
 
@@ -63,7 +76,9 @@ public class calculateTest {
 
     @Test
     public void emptyBrackets() {
-        Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("()"));
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("()"));
+        Assertions.assertEquals(1, thrown.getPos());
+        Assertions.assertEquals(Type.CLOSING_BR, thrown.getToken().getType());
     }
 
     @Test
@@ -73,24 +88,45 @@ public class calculateTest {
     }
 
     @Test
-    public void correctPositionBrackets() {
+    public void twoOperatorsInSequence() {
         UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("2 + (4 - + 5)"));
         Assertions.assertEquals(9, thrown.getPos());
+        Assertions.assertEquals(Type.ADD, thrown.getToken().getType());
     }
+
     @Test
-    public void correctPositionVariableName() {
+    public void wrongVariableName() {
         UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("x 2 = 5"));
         Assertions.assertEquals(2, thrown.getPos());
+        Assertions.assertEquals(Type.NUM, thrown.getToken().getType());
     }
+
     @Test
-    public void correctPositionVariableNameDigitFirst() {
+    public void wrongVariableNameDigitFirst() {
         UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("2x = 5"));
         Assertions.assertEquals(1, thrown.getPos());
+        Assertions.assertEquals(Type.VAR, thrown.getToken().getType());
     }
+
+    @Test
+    public void incorrectAssNoVariable() {
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("2 + 3 = 4 + 1"));
+        Assertions.assertEquals(6, thrown.getPos());
+        Assertions.assertEquals(Type.ASS, thrown.getToken().getType());
+    }
+
+    @Test
+    public void incorrectAssTermLeft() {
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("2 + x = 5"));
+        Assertions.assertEquals(6, thrown.getPos());
+        Assertions.assertEquals(Type.ASS, thrown.getToken().getType());
+    }
+
     @Test
     public void correctPositionVariableValue() {
         UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calc.calculate("x = 3+*4"));
-        Assertions.assertEquals("pos 6", thrown.getMessage().substring(0, 5));
+        Assertions.assertEquals(6, thrown.getPos());
+        Assertions.assertEquals(Type.MUL, thrown.getToken().getType());
     }
 
     @Test
@@ -125,7 +161,4 @@ public class calculateTest {
         Assertions.assertEquals(93.0, calc.calculate("70-(81-39)/7+6*7-90/5+85/17").getRes());
         Assertions.assertEquals(-210.0, calc.calculate("(900-250+140)-(400+900/3-200)-500").getRes());
     }
-
-
-
 }

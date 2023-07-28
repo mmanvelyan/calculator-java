@@ -11,6 +11,10 @@ public class UnexpectedTokenException extends RuntimeException {
         return got.getPos();
     }
 
+    public Token getToken(){
+        return got;
+    }
+
     public String getMessage(){
         return ("pos " + got.getPos() + " : expected '" + String.join("' or '", exp) + "', got '" + got.getType().toString() + "'");
     }
