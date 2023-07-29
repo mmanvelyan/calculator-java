@@ -1,17 +1,17 @@
 package com.calc;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class PushBackLexer implements Lexer {
     private final Lexer lex;
-    private final ArrayList<Token> prevTokens;
+    private final LinkedList<Token> prevTokens;
     private int rollbackLevel = 0;
     private final int maxRollback;
 
     public PushBackLexer(Lexer lex, int maxRollback) {
         this.lex = lex;
         this.maxRollback = maxRollback;
-        prevTokens = new ArrayList<>();
+        prevTokens = new LinkedList<>();
     }
 
     public PushBackLexer(Lexer lex){
@@ -22,9 +22,9 @@ public class PushBackLexer implements Lexer {
         Token nxt;
         if (rollbackLevel == 0){
             nxt = lex.nextToken();
-            prevTokens.add(0, nxt);
+            prevTokens.addFirst(nxt);
             if (prevTokens.size() > maxRollback){
-                prevTokens.remove(prevTokens.size()-1);
+                prevTokens.removeLast();
             }
         } else {
             nxt = prevTokens.get(rollbackLevel-1);

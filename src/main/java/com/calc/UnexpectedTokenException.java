@@ -3,7 +3,7 @@ package com.calc;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class UnexpectedTokenException extends RuntimeException {
+public class UnexpectedTokenException extends RuntimeException implements PosisionException {
     private final Token got;
     private final ArrayList<String> exp = new ArrayList<>();
 

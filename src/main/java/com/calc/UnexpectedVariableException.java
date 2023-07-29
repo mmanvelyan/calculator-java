@@ -1,6 +1,6 @@
 package com.calc;
 
-public class UnexpectedVariableException extends RuntimeException {
+public class UnexpectedVariableException extends RuntimeException implements PosisionException {
     private final int pos;
     private final String name;
 
