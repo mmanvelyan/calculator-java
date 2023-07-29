@@ -1,6 +1,7 @@
 package com.calc;
 
 import java.util.LinkedList;
+import org.apache.log4j.Logger;
 
 public class PushBackLexer implements Lexer {
     private final Lexer lex;
@@ -8,10 +9,13 @@ public class PushBackLexer implements Lexer {
     private int rollbackLevel = 0;
     private final int maxRollback;
 
+    private final Logger log = Logger.getLogger(PushBackLexer.class);
+
     public PushBackLexer(Lexer lex, int maxRollback) {
         this.lex = lex;
         this.maxRollback = maxRollback;
         prevTokens = new LinkedList<>();
+        log.info("------------------------------------------------------");
     }
 
     public PushBackLexer(Lexer lex){
@@ -30,6 +34,7 @@ public class PushBackLexer implements Lexer {
             nxt = prevTokens.get(rollbackLevel-1);
             rollbackLevel--;
         }
+        log.info("nxt : { type = " + nxt.getType().toString()+", pos = " + nxt.getPos() + ", value = " + nxt.getVal() + ", name = " + nxt.getName() + " }");
         return nxt;
     }
 
@@ -37,6 +42,7 @@ public class PushBackLexer implements Lexer {
         if (rollbackLevel == maxRollback){
             throw new RollbackLevelException("Rollback level exceeded");
         }
+        log.info("rollback");
         rollbackLevel++;
     }
 }

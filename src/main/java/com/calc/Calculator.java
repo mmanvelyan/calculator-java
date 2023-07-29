@@ -1,7 +1,6 @@
 package com.calc;
 
 import java.util.ArrayList;
-import java.util.logging.*;
 
 import static com.calc.Type.*;
 
@@ -10,8 +9,10 @@ import static com.calc.Type.*;
 <expression> -> <term>
 <term> -> <factor> <"+"> <term>
 <term> -> <factor> <"-"> <term>
+<term> -> <factor>
 <factor> -> <number> <"*"> <factor>
 <factor> -> <number> <"/"> <factor>
+<factor> -> <number>
 <number> -> <numeric>
 <number> -> <variable>
 <number> -> <"("> <expression> <")">
@@ -19,23 +20,7 @@ import static com.calc.Type.*;
 
 public class Calculator {
 
-    private static final Logger log = Logger.getLogger(Calculator.class.getName());
-
-
-    private final Variables variables;
-
-    Calculator(){
-        variables = new Variables();
-        try {
-            LogManager.getLogManager().reset();
-            FileHandler fh = new FileHandler("C:/Users/mmanv/Documents/GitHub/calculator/CalculatorLog.log");
-            log.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    private final Variables variables = new Variables();
 
     private Node parseNumber(PushBackLexer lex){
         Token nxt = lex.nextToken();
