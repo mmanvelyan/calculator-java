@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import static com.calc.Type.*;
 
 /*
+<query> -> <command> # <expression>
+<query> -> <expression>
 <expression> -> <variable> <"="> <expression>
 <expression> -> <term>
 <term> -> <factor> <"+"> <term>
@@ -18,9 +20,7 @@ import static com.calc.Type.*;
 <number> -> <"("> <expression> <")">
  */
 
-public class Calculator {
-
-    private final Variables variables = new Variables();
+public class MathExpressionParser {
 
     private Node parseNumber(PushBackLexer lex){
         Token nxt = lex.nextToken();
@@ -108,7 +108,7 @@ public class Calculator {
         return new Node(terms, new Token(ASS));
     }
 
-    private Node parse(String s){
+    public Node parse(String s){
         PushBackLexer lex = new PushBackLexer(new BaseLexer(s));
         Node tree = parseExpression(lex);
         Token nxt = lex.nextToken();
@@ -116,12 +116,6 @@ public class Calculator {
             throw new UnexpectedTokenException(nxt, "END");
         }
         return tree;
-    }
-
-    public EvalResult calculate(String s){
-        Node tree = parse(s);
-        Eval e = new Eval();
-        return e.eval(tree, variables);
     }
 }
 

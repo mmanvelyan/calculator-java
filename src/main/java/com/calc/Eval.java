@@ -1,7 +1,5 @@
 package com.calc;
 
-import static com.calc.Type.ADD;
-
 public class Eval {
     public EvalResult eval(Node n, Variables variables) {
         Token token = n.getToken();
