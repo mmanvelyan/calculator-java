@@ -1,5 +1,5 @@
 package com.calc;
-public interface PosisionException{
+public interface PositionException {
     int getPos();
     String getMessage();
 }

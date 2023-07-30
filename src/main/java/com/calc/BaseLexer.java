@@ -70,6 +70,7 @@ public class BaseLexer implements Lexer {
         }
         return s.substring(begPos, pos);
     }
+
     private float getNumericValue() {
         int begPos = pos, len = s.length();
         while (pos < len && (Character.isDigit(s.charAt(pos)) || s.charAt(pos) == '.')){

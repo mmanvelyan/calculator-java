@@ -15,7 +15,7 @@ public class PushBackLexer implements Lexer {
         this.lex = lex;
         this.maxRollback = maxRollback;
         prevTokens = new LinkedList<>();
-        log.info("------------------------------------------------------");
+        log.debug("------------------------------------------------------");
     }
 
     public PushBackLexer(Lexer lex){
@@ -34,7 +34,7 @@ public class PushBackLexer implements Lexer {
             nxt = prevTokens.get(rollbackLevel-1);
             rollbackLevel--;
         }
-        log.info("nxt : { type = " + nxt.getType().toString()+", pos = " + nxt.getPos() + ", value = " + nxt.getVal() + ", name = " + nxt.getName() + " }");
+        log.debug("nxt : { type = " + nxt.getType().toString()+", pos = " + nxt.getPos() + ", value = " + nxt.getVal() + ", name = " + nxt.getName() + " }");
         return nxt;
     }
 
@@ -42,7 +42,7 @@ public class PushBackLexer implements Lexer {
         if (rollbackLevel == maxRollback){
             throw new RollbackLevelException("Rollback level exceeded");
         }
-        log.info("rollback");
+        log.debug("rollback");
         rollbackLevel++;
     }
 }

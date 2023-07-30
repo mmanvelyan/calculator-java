@@ -6,6 +6,7 @@ public class EvalResult {
     EvalResult(float f){
         res = f;
     }
+
     float getRes(){
         return res;
     }

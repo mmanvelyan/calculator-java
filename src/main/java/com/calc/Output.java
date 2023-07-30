@@ -1,7 +1,5 @@
 package com.calc;
 
-import javafx.geometry.Pos;
-
 public class Output {
     public static void printToken(Token token){
         if (token.getType() == Type.NUM){
@@ -14,7 +12,7 @@ public class Output {
         System.out.print(" ");
     }
 
-    public static void printPositionException(PosisionException e){
+    public static void printPositionException(PositionException e){
         int pos = e.getPos();
         for (int i = 0; i < pos; i++) {
             System.out.print(" ");
@@ -37,6 +35,7 @@ public class Output {
         }
         printToken(n.getToken());
     }
+
     public static void printResult(EvalResult er){
         System.out.println(er.getRes());
     }
