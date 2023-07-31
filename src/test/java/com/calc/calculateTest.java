@@ -11,8 +11,8 @@ public class calculateTest {
     private float calculate(String s){
         Node tree = calc.parse(s);
         Eval e = new Eval();
-        EvalResult res = e.eval(tree, variables);
-        return res.getRes();
+        Result res = e.eval(tree, variables);
+        return res.getVal();
     }
     
     @Test
@@ -171,3 +171,9 @@ public class calculateTest {
         Assertions.assertEquals(-210.0, calculate("(900-250+140)-(400+900/3-200)-500"));
     }
 }
+
+
+
+
+
+

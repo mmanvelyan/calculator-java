@@ -25,19 +25,12 @@ public class Output {
         System.out.println(e.getMessage());
     }
 
-    public static void printTreePostfix(Node n){
-        Node l = n.getL(), r = n.getR();
-        if (l != null) {
-            printTreePostfix(l);
+    public static void printResult(Result er){
+        if (er.getType() == ResultType.VAL) {
+            System.out.println(er.getVal());
+        } else {
+            System.out.println(er.getStr());
         }
-        if (r != null){
-            printTreePostfix(r);
-        }
-        printToken(n.getToken());
-    }
-
-    public static void printResult(EvalResult er){
-        System.out.println(er.getRes());
     }
 }
 

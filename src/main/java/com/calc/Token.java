@@ -51,6 +51,16 @@ public class Token {
     public int getPos(){
         return pos;
     }
+
+    public String toString(){
+        if (type == Type.NUM){
+            return String.valueOf(val);
+        } else if (type == Type.VAR){
+            return name;
+        } else {
+            return type.toString();
+        }
+    }
 }
 
 
