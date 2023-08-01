@@ -3,15 +3,15 @@ package com.calc;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class calculateTest {
+public class CalculateTest {
 
     MathExpressionParser calc = new MathExpressionParser();
     Variables variables = new Variables();
     
     private float calculate(String s){
         Node tree = calc.parse(s);
-        Eval e = new Eval();
-        Result res = e.eval(tree, variables);
+        Eval e = new Eval(tree);
+        Result res = e.execute(variables);
         return res.getVal();
     }
     
@@ -20,7 +20,7 @@ public class calculateTest {
         Assertions.assertEquals(5.0, calculate("2+3"));
     }
     @Test
-    public void mult() {
+    public void mul() {
         Assertions.assertEquals(6.0, calculate("2*3"));
     }
     @Test
@@ -149,17 +149,17 @@ public class calculateTest {
     }
 
     @Test
-    public void multAddOrder() {
+    public void mulAddOrder() {
         Assertions.assertEquals(6.0, calculate("2+2*2"));
     }
 
     @Test
-    public void multSubOrder() {
+    public void mulSubOrder() {
         Assertions.assertEquals(-2.0, calculate("2-2*2"));
     }
 
     @Test
-    public void multBracketsOrder() {
+    public void mulBracketsOrder() {
         Assertions.assertEquals(8.0, calculate("(2+2)*2"));
     }
 

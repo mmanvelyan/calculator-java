@@ -1,7 +1,16 @@
 package com.calc;
 
-public class Eval {
-    public Result eval(Node n, Variables variables) {
+public class Eval extends Command {
+
+    public Eval(Node expression){
+        super(expression);
+    }
+
+    public Result execute(Variables variables){
+        return eval(expression, variables);
+    }
+
+    private Result eval(Node n, Variables variables) {
         Token token = n.getToken();
         Node l = n.getL();
         Node r = n.getR();

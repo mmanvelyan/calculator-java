@@ -1,13 +1,13 @@
 package com.calc;
 
-public class Command {
-    private final CommandType type;
+public abstract class Command {
 
-    public Command(CommandType type){
-        this.type = type;
+    protected final Node expression;
+
+    public Command(Node expression){
+        this.expression = expression;
     }
 
-    public CommandType getType(){
-        return type;
-    }
+    public abstract Result execute(Variables variables);
+
 }

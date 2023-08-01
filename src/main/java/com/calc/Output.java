@@ -1,16 +1,6 @@
 package com.calc;
 
 public class Output {
-    public static void printToken(Token token){
-        if (token.getType() == Type.NUM){
-            System.out.print(token.getVal());
-        } else if (token.getType() == Type.VAR){
-            System.out.print(token.getName());
-        } else {
-            System.out.print(token.getType().toString());
-        }
-        System.out.print(" ");
-    }
 
     public static void printPositionException(PositionException e){
         int pos = e.getPos();

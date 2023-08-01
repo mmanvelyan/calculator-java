@@ -2,7 +2,7 @@ package com.calc;
 
 public class UnexpectedCommandException extends RuntimeException {
 
-    private String command;
+    private final String command;
 
     public String getMessage(){
         return ("Unexpected command '" + command + "'");

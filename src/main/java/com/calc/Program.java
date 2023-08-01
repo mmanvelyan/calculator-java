@@ -6,18 +6,12 @@ public class Program {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        MathExpressionParser expressionParser = new MathExpressionParser();
-        CommandParser commandParser = new CommandParser();
-        RunCommand run = new RunCommand();
+        QueryParser parser = new QueryParser();
         Variables variables = new Variables();
         while (in.hasNextLine()) {
             String s = in.nextLine();
             try {
-                ParseQuery parser = new ParseQuery();
-                Node expression = expressionParser.parse(parser.getExpression(s));
-                Command command = commandParser.parse(parser.getCommand(s));
-                Result res = run.runCommand(command, expression, variables);
-                Output.printResult(res);
+                Output.printResult(parser.parse(s).execute(variables));
             } catch (UnexpectedTokenException | UnexpectedVariableException e) {
                 Output.printPositionException(e);
             } catch (Exception e){

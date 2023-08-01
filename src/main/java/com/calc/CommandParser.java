@@ -1,15 +1,13 @@
 package com.calc;
 
-import static com.calc.CommandType.*;
-
 public class CommandParser {
 
-    public Command parse(String s){
+    public Class<? extends Command> parse(String s){
         String command = s.replace(" ", "");
         if (command.equals("rpn")){
-            return new Command(RPN);
+            return ReversePolishNotation.class;
         } else if (command.equals("eval")){
-            return new Command(EVAL);
+            return Eval.class;
         } else {
             throw new UnexpectedCommandException(command);
         }

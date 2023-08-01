@@ -1,8 +1,12 @@
 package com.calc;
 
-public class ReversePolishNotation {
+public class ReversePolishNotation extends Command{
 
     private String result = "";
+
+    public ReversePolishNotation(Node expression){
+        super(expression);
+    }
 
     public void getRPN(Node n){
         Node l = n.getL(), r = n.getR();
@@ -15,7 +19,7 @@ public class ReversePolishNotation {
         result += n.getToken().toString() + " ";
     }
 
-    public Result reversePolishNotation(Node expression){
+    public Result execute(Variables variables){
         getRPN(expression);
         return new Result(result);
     }

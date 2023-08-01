@@ -64,7 +64,7 @@ public class PushBackLexerTest {
     @Test
     public void rollbackLimitException(){
         lex = new PushBackLexer(new BaseLexer("+-*/=5.2 xyz"), 0);
-        Token nxt = lex.nextToken();
+        lex.nextToken();
         assertThrows(RollbackLevelException.class, () -> lex.returnToPrevPos());
     }
 

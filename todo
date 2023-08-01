@@ -10,3 +10,4 @@
 +9. UnexpectedVariableException
 +10. -Lexer.getPos(). UnexpectedTokenException got, exp - Tokens
 11. обратная польская запись (Visitor)
+12. Pattern Command
