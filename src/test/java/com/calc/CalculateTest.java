@@ -4,11 +4,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class CalculateTest {
-
-    MathExpressionParser calc = new MathExpressionParser();
-    Variables variables = new Variables();
     
     private float calculate(String s){
+        MathExpressionParser calc = new MathExpressionParser();
+        Variables variables = new Variables();
         Node tree = calc.parse(s);
         Eval e = new Eval(tree);
         Result res = e.execute(variables);

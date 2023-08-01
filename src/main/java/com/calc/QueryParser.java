@@ -24,10 +24,10 @@ public class QueryParser {
     }
 
     public Command parse(String s) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        MathExpressionParser expressionParser = new MathExpressionParser();
-        Node expression = expressionParser.parse(getExpression(s));
         CommandParser commandParser = new CommandParser();
         Class<? extends Command> X = commandParser.parse(getCommand(s));
+        MathExpressionParser expressionParser = new MathExpressionParser();
+        Node expression = expressionParser.parse(getExpression(s));
         Constructor<? extends Command> constructor = X.getConstructor(Node.class);
         return constructor.newInstance(expression);
     }
