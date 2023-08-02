@@ -1,35 +1,27 @@
 package com.calc;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 public class QueryParser {
 
-    private String getCommand(String s){
-        if (s.indexOf('#') != -1){
-            return s.substring(0, s.lastIndexOf('#'));
-        }
-        return "eval";
+    private String fixPosition(String s, int offset){
+        char[] charArray = new char[offset];
+        Arrays.fill(charArray, ' ');
+        return new String(charArray)+s;
     }
 
-    private String getExpression(String s){
-        if (s.indexOf('#') != -1){
-            int offset = s.lastIndexOf('#')+1;
-            char[] charArray = new char[offset];
-            Arrays.fill(charArray, ' ');
-            return new String(charArray)+s.substring(s.lastIndexOf('#')+1);
-        }
-        return s;
-    }
+    public Query parse(String s) {
 
-    public Command parse(String s) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        int separatorPosition = s.indexOf('#');
+        String commandPart = separatorPosition != -1 ? s.substring(0, separatorPosition) : "eval";
+        String expressionPart = separatorPosition != -1 ? s.substring(separatorPosition+1) : s;
+        String fixedExpressionPart = fixPosition(expressionPart, separatorPosition+1);
+
         CommandParser commandParser = new CommandParser();
-        Class<? extends Command> X = commandParser.parse(getCommand(s));
+        Command command = commandParser.parse(commandPart);
         MathExpressionParser expressionParser = new MathExpressionParser();
-        Node expression = expressionParser.parse(getExpression(s));
-        Constructor<? extends Command> constructor = X.getConstructor(Node.class);
-        return constructor.newInstance(expression);
+        Node expression = expressionParser.parse(fixedExpressionPart);
+        return new Query(command, expression);
     }
 
 }

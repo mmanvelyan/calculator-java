@@ -4,10 +4,6 @@ public class ReversePolishNotation extends Command{
 
     private String result = "";
 
-    public ReversePolishNotation(Node expression){
-        super(expression);
-    }
-
     public void getRPN(Node n){
         Node l = n.getL(), r = n.getR();
         if (l != null) {
@@ -19,7 +15,7 @@ public class ReversePolishNotation extends Command{
         result += n.getToken().toString() + " ";
     }
 
-    public Result execute(Variables variables){
+    public Result execute(Node expression, Variables variables){
         getRPN(expression);
         return new Result(result);
     }

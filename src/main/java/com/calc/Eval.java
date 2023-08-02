@@ -2,11 +2,7 @@ package com.calc;
 
 public class Eval extends Command {
 
-    public Eval(Node expression){
-        super(expression);
-    }
-
-    public Result execute(Variables variables){
+    public Result execute(Node expression, Variables variables){
         return eval(expression, variables);
     }
 
@@ -39,7 +35,7 @@ public class Eval extends Command {
                 }
                 return new Result(eval(l, variables).getVal() / rEval);
             default:
-                return null;
+                return new Result(0);
         }
     }
 }

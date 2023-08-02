@@ -11,7 +11,8 @@ public class Program {
         while (in.hasNextLine()) {
             String s = in.nextLine();
             try {
-                Output.printResult(parser.parse(s).execute(variables));
+                Query query = parser.parse(s);
+                Output.printResult(query.getCommand().execute(query.getExpression(), variables));
             } catch (UnexpectedTokenException | UnexpectedVariableException e) {
                 Output.printPositionException(e);
             } catch (Exception e){
