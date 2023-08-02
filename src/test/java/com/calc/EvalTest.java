@@ -3,14 +3,14 @@ package com.calc;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CalculateTest {
+public class EvalTest {
     
     private float calculate(String s){
         MathExpressionParser calc = new MathExpressionParser();
         Variables variables = new Variables();
         Node tree = calc.parse(s);
-        Eval e = new Eval(tree);
-        Result res = e.execute(variables);
+        Eval e = new Eval();
+        Result res = e.execute(tree, variables);
         return res.getVal();
     }
     
