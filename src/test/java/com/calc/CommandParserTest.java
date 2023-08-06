@@ -19,7 +19,7 @@ public class CommandParserTest {
 
     @Test
     public void unexpectedCommand(){
-        Assertions.assertThrows(UnexpectedCommandException.class, ()->commandParser.parse("prn").getClass());
+        Assertions.assertThrows(UnexpectedCommandException.class, ()->commandParser.parse("prn"));
     }
 
 }

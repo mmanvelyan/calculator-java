@@ -8,6 +8,7 @@ import static com.calc.Type.*;
 <query> -> <command> # <expression>
 <query> -> <expression>
 <expression> -> <variable> <"="> <expression>
+<expression> -> <function> <"="> <term>
 <expression> -> <term>
 <term> -> <factor> <"+"> <term>
 <term> -> <factor> <"-"> <term>
@@ -17,10 +18,41 @@ import static com.calc.Type.*;
 <factor> -> <number>
 <number> -> <numeric>
 <number> -> <variable>
+<number> -> <function>
 <number> -> <"("> <expression> <")">
+<functionVal> -> <variable> ( <functionValArgs> )
+<functionAss> -> <variable> ( <functionAssArgs> )
+<functionValArgs> -> <expression> , <functionValArgs>
+<functionValArgs> -> <expression>
+<functionAssArgs> -> <variable> , <functionAssArgs>
+<functionAssArgs> -> <variable>
  */
 
 public class MathExpressionParser {
+
+    private ArrayList<Node> parseArgs(PushBackLexer lex) {
+        ArrayList<Node> args = new ArrayList<>();
+        Node arg = parseExpression(lex);
+        args.add(arg);
+        Token nxt = lex.nextToken();
+        while (nxt.getType() == COMMA){
+            arg = parseExpression(lex);
+            args.add(arg);
+            nxt = lex.nextToken();
+            if (nxt.getType() == CLOSING_BR){
+                lex.returnToPrevPos();
+                return args;
+            } else if (nxt.getType() != COMMA){
+                throw new UnexpectedTokenException(nxt, ",");
+            }
+        }
+        if (nxt.getType() == CLOSING_BR){
+            lex.returnToPrevPos();
+            return args;
+        } else {
+            throw new UnexpectedTokenException(nxt, ")", ",");
+        }
+    }
 
     private Node parseNumber(PushBackLexer lex){
         Token nxt = lex.nextToken();
@@ -33,12 +65,27 @@ public class MathExpressionParser {
                 throw new UnexpectedTokenException(nxt, ")");
             }
             return expression;
-        } else if (nxt.getType() == NUM || nxt.getType() == VAR) {
+        } else if (nxt.getType() == NUM) {
             return new Node(nxt, null, null);
+        } else if (nxt.getType() == VAR) {
+                Token nxtFun = lex.nextToken();
+                if (nxtFun.getType() == OPEN_BR){
+                    ArrayList<Node> args = parseArgs(lex);
+                    nxtFun = lex.nextToken();
+                    if (nxtFun.getType() == CLOSING_BR){
+                        return new Node(new Token(nxt.getName(), args, nxt.getPos()), null, null);
+                    } else {
+                        throw new UnexpectedTokenException(nxt, ")");
+                    }
+                } else {
+                    lex.returnToPrevPos();
+                    return new Node(nxt, null, null);
+                }
         } else {
-            throw new UnexpectedTokenException(nxt, "(", "NUM", "VAR");
+                throw new UnexpectedTokenException(nxt, "(", "NUM", "VAR");
         }
     }
+
     private Node parseFactor(PushBackLexer lex){
         Node factor = parseNumber(lex);
         Token nxt = lex.nextToken();
@@ -46,16 +93,16 @@ public class MathExpressionParser {
             Node number = parseNumber(lex);
             factor = new Node(nxt, factor, number);
             nxt = lex.nextToken();
-            if (nxt.getType() == ADD || nxt.getType() == SUB || nxt.getType() == ASS || nxt.getType() == CLOSING_BR){
+            if (nxt.getType() == ADD || nxt.getType() == SUB || nxt.getType() == ASS || nxt.getType() == CLOSING_BR || nxt.getType() == COMMA){
                 lex.returnToPrevPos();
                 return factor;
             }
         }
-        if (nxt.getType() == ADD || nxt.getType() == SUB || nxt.getType() == ASS || nxt.getType() == CLOSING_BR){
+        if (nxt.getType() == ADD || nxt.getType() == SUB || nxt.getType() == ASS || nxt.getType() == CLOSING_BR || nxt.getType() == COMMA){
             lex.returnToPrevPos();
             return factor;
         } else if (nxt.getType() != END){
-            throw new UnexpectedTokenException(nxt, "MUL", "DIV");
+            throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV");
         }
         return factor;
     }
@@ -67,16 +114,16 @@ public class MathExpressionParser {
             Node factor = parseFactor(lex);
             term = new Node(nxt, term, factor);
             nxt = lex.nextToken();
-            if (nxt.getType() == ASS || nxt.getType() == CLOSING_BR){
+            if (nxt.getType() == ASS || nxt.getType() == CLOSING_BR || nxt.getType() == COMMA){
                 lex.returnToPrevPos();
                 return term;
             }
         }
-        if (nxt.getType() == ASS || nxt.getType() == CLOSING_BR){
+        if (nxt.getType() == ASS || nxt.getType() == CLOSING_BR || nxt.getType() == COMMA){
             lex.returnToPrevPos();
             return term;
         } else if (nxt.getType() != END){
-            throw new UnexpectedTokenException(nxt, "ADD", "SUB");
+            throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV");
         }
         return term;
     }
@@ -85,21 +132,23 @@ public class MathExpressionParser {
         ArrayList<Node> terms = new ArrayList<>();
         terms.add(parseTerm(lex));
         Token nxt = lex.nextToken();
-        boolean flag = (terms.get(0).getToken().getType() != VAR);
+        boolean flag = (terms.get(0).getToken().getType() != VAR && terms.get(0).getToken().getType() != FUN);
+        boolean flagF = false;
         while (nxt.getType() == Type.ASS){
-            if (flag){
+            if (flag || flagF){
                 throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV", "END");
             }
             Node term = parseTerm(lex);
             terms.add(term);
-            flag = (terms.get(terms.size()-1).getToken().getType() != VAR);
+            flag = (terms.get(terms.size()-1).getToken().getType() != VAR  && terms.get(terms.size()-1).getToken().getType() != FUN);
+            flagF =  terms.get(terms.size()-2).getToken().getType() == FUN;
             nxt = lex.nextToken();
-            if (nxt.getType() == CLOSING_BR){
+            if (nxt.getType() == CLOSING_BR || nxt.getType() == COMMA){
                 lex.returnToPrevPos();
                 return new Node(terms, new Token(ASS));
             }
         }
-        if (nxt.getType() == CLOSING_BR){
+        if (nxt.getType() == CLOSING_BR || nxt.getType() == COMMA){
             lex.returnToPrevPos();
             return new Node(terms, new Token(ASS));
         } else if (nxt.getType() != END){

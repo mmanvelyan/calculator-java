@@ -47,6 +47,9 @@ public class BaseLexer implements Lexer {
             case  '/':
                 nxt = new Token(Type.DIV, pos-1);
                 break;
+            case ',':
+                nxt = new Token(COMMA, pos-1);
+                break;
             default:
                 if (Character.isDigit(c)){
                     pos--;

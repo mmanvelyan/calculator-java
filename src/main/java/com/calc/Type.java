@@ -12,7 +12,9 @@ public enum Type {
     CLOSING_BR(")"),
     END("END"),
     ASS("="),
-    INV("invalid symbol");
+    INV("invalid symbol"),
+    FUN("function"),
+    COMMA(",");
 
     final private String description;
     Type(String description){

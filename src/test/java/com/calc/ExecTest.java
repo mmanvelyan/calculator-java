@@ -9,6 +9,8 @@ public class ExecTest {
     private final QueryParser queryParser = new QueryParser();
     private final Variables variables = new Variables();
 
+    private final Functions functions = new Functions();
+
     private void assertEquals(Result a, Result b){
         Assertions.assertEquals(a.getType(), b.getType());
         Assertions.assertEquals(a.getStr(), b.getStr());
@@ -19,7 +21,7 @@ public class ExecTest {
         Query query = queryParser.parse(s);
         Command command = query.getCommand();
         Node expression = query.getExpression();
-        return command.execute(expression, variables);
+        return command.execute(expression, variables, functions);
     }
 
     @Test

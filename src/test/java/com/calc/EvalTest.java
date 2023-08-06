@@ -8,9 +8,10 @@ public class EvalTest {
     private float calculate(String s){
         MathExpressionParser calc = new MathExpressionParser();
         Variables variables = new Variables();
+        Functions functions = new Functions();
         Node tree = calc.parse(s);
         Eval e = new Eval();
-        Result res = e.execute(tree, variables);
+        Result res = e.execute(tree, variables, functions);
         return res.getVal();
     }
     
