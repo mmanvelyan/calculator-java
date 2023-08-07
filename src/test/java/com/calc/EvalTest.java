@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 public class EvalTest {
     
-    private float calculate(String s){
+    private Double calculate(String s){
         MathExpressionParser calc = new MathExpressionParser();
         Variables variables = new Variables();
         Functions functions = new Functions();

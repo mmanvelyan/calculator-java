@@ -34,7 +34,7 @@ public class Eval extends Command {
                 return evalFunction(token, variables, functions);
             case ASS:
                 if (l.getToken().getType() == Type.VAR){
-                    float value = eval(r, variables, functions).getVal();
+                    double value = eval(r, variables, functions).getVal();
                     variables.createVariable(l.getToken().getName(), value);
                     return new Result(value);
                 } else if (l.getToken().getType() == Type.FUN){
@@ -55,13 +55,41 @@ public class Eval extends Command {
             case MUL:
                 return new Result(eval(l, variables, functions).getVal() * eval(r, variables, functions).getVal());
             case DIV:
-                float rEval = eval(r, variables, functions).getVal();
+                double rEval = eval(r, variables, functions).getVal();
                 if (rEval == 0) {
                     throw new ArithmeticException("/ by 0");
                 }
                 return new Result(eval(l, variables, functions).getVal() / rEval);
             case POWER:
-                return new Result((float)Math.pow(eval(l, variables, functions).getVal(), eval(r, variables, functions).getVal()));
+                return new Result(Math.pow(eval(l, variables, functions).getVal(), eval(r, variables, functions).getVal()));
+
+
+            case SQRT:
+                return new Result(Math.sqrt(eval(l, variables, functions).getVal()));
+            case EXP:
+                return new Result(Math.exp(eval(l, variables, functions).getVal()));
+            case LN:
+                return new Result(Math.log(eval(l, variables, functions).getVal()));
+            case LG:
+                return new Result(Math.log10(eval(l, variables, functions).getVal()));
+            case LOG:
+                return new Result((Math.log(eval(r, variables, functions).getVal())/Math.log(eval(l, variables, functions).getVal())));
+            case SIN:
+                return new Result(Math.sin(eval(l, variables, functions).getVal()));
+            case COS:
+                return new Result(Math.cos(eval(l, variables, functions).getVal()));
+            case TAN:
+                return new Result(Math.tan(eval(l, variables, functions).getVal()));
+            case ARCSIN:
+                return new Result(Math.asin(eval(l, variables, functions).getVal()));
+            case ARCCOS:
+                return new Result(Math.acos(eval(l, variables, functions).getVal()));
+            case ARCTAN:
+                return new Result(Math.atan(eval(l, variables, functions).getVal()));
+            case ABS:
+                return new Result(Math.abs(eval(l, variables, functions).getVal()));
+            case MOD:
+                return new Result(((eval(l, variables, functions).getVal() % eval(r, variables, functions).getVal())));
             default:
                 return new Result(0);
         }

@@ -1,11 +1,11 @@
 package com.calc;
 
 public class Result {
-    private final float val;
+    private final double val;
     private final String str;
     private final ResultType type;
 
-    public Result(float f){
+    public Result(double f){
         type = ResultType.VAL;
         val = f;
         str = "";
@@ -21,7 +21,7 @@ public class Result {
         return type;
     }
 
-    public float getVal(){
+    public double getVal(){
         return val;
     }
 

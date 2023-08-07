@@ -56,7 +56,7 @@ public class BaseLexer implements Lexer {
             default:
                 if (Character.isDigit(c)){
                     pos--;
-                    float val = getNumericValue();
+                    double val = getNumericValue();
                     nxt = new Token(val, pos-1);
                 } else if (Character.isLetter(c)) {
                     pos--;
@@ -77,12 +77,12 @@ public class BaseLexer implements Lexer {
         return s.substring(begPos, pos);
     }
 
-    private float getNumericValue() {
+    private double getNumericValue() {
         int begPos = pos, len = s.length();
         while (pos < len && (Character.isDigit(s.charAt(pos)) || s.charAt(pos) == '.')){
             pos++;
         }
-        return Float.parseFloat(s.substring(begPos, pos));
+        return Double.parseDouble(s.substring(begPos, pos));
     }
 }
 

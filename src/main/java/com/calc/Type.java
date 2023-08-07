@@ -15,7 +15,21 @@ public enum Type {
     INV("invalid symbol"),
     FUN("function"),
     COMMA(","),
-    POWER("^");
+    POWER("^"),
+
+    SQRT("sqrt"),
+    EXP("exp"),
+    LN("ln"),
+    LG("lg"),
+    LOG("log"),
+    SIN("sin"),
+    COS("cos"),
+    TAN("tan"),
+    ARCSIN("arcsin"),
+    ARCCOS("arccos"),
+    ARCTAN("arctan"),
+    ABS("abs"),
+    MOD("mod");
 
     final private String description;
     Type(String description){

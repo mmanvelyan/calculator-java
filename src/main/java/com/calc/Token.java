@@ -6,10 +6,10 @@ public class Token {
     private final Type type;
     private final String name;
     private final int pos;
-    private final float val;
+    private final double val;
     private final ArrayList<Node> args;
 
-    Token (Type type, String name, int pos, float val, ArrayList<Node> args){
+    Token (Type type, String name, int pos, double val, ArrayList<Node> args){
         this.type = type;
         this.name = name;
         this.pos = pos;
@@ -32,11 +32,11 @@ public class Token {
         this(type, "", pos, 0, new ArrayList<>());
     }
 
-    Token (float val){
+    Token (double val){
         this(Type.NUM, "", 0, val, new ArrayList<>());
     }
 
-    Token (float val, int pos){
+    Token (double val, int pos){
         this(Type.NUM, "", pos, val, new ArrayList<>());
     }
 
@@ -52,7 +52,7 @@ public class Token {
         return name;
     }
 
-    public float getVal() {
+    public double getVal() {
         return val;
     }
 
