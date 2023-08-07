@@ -8,6 +8,10 @@ public class UnexpectedVariableException extends RuntimeException implements Pos
         return ("pos " + pos + ", got unexpected variable name '" + name + "'");
     }
 
+    public String getName(){
+        return name;
+    }
+
     public int getPos(){
         return pos;
     }

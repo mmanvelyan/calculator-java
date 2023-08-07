@@ -6,6 +6,10 @@ public class UnexpectedFunctionException extends RuntimeException implements Pos
 
     private final String name;
 
+    public String getName() {
+        return name;
+    }
+
     public String getMessage(){
         return ("pos " + pos + ", got unexpected function name '" + name + "'");
     }

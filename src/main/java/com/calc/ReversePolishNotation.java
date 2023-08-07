@@ -12,7 +12,7 @@ public class ReversePolishNotation extends Command{
                 result += ", ";
             }
             result = result.substring(0, result.length()-3);
-            result += ")";
+            result += ") ";
             return;
         }
         Node l = n.getL(), r = n.getR();

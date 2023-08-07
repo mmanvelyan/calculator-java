@@ -132,16 +132,18 @@ public class MathExpressionParser {
         ArrayList<Node> terms = new ArrayList<>();
         terms.add(parseTerm(lex));
         Token nxt = lex.nextToken();
-        boolean flag = (terms.get(0).getToken().getType() != VAR && terms.get(0).getToken().getType() != FUN);
-        boolean flagF = false;
+        boolean wasTerm = (terms.get(0).getToken().getType() != VAR) && (terms.get(0).getToken().getType() != FUN);
+        boolean wasFunction = terms.get(0).getToken().getType() == FUN;
+        boolean wasVariable = terms.get(0).getToken().getType() == VAR;
         while (nxt.getType() == Type.ASS){
-            if (flag || flagF){
+            if (wasTerm || (wasFunction && wasVariable)){
                 throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV", "END");
             }
             Node term = parseTerm(lex);
             terms.add(term);
-            flag = (terms.get(terms.size()-1).getToken().getType() != VAR  && terms.get(terms.size()-1).getToken().getType() != FUN);
-            flagF =  terms.get(terms.size()-2).getToken().getType() == FUN;
+            wasTerm = wasTerm || wasFunction || (terms.get(terms.size()-1).getToken().getType() != VAR) && (terms.get(terms.size()-1).getToken().getType() != FUN);
+            wasFunction = wasFunction || terms.get(terms.size()-1).getToken().getType() == FUN;
+            wasVariable = wasVariable || terms.get(terms.size()-1).getToken().getType() == VAR;
             nxt = lex.nextToken();
             if (nxt.getType() == CLOSING_BR || nxt.getType() == COMMA){
                 lex.returnToPrevPos();
