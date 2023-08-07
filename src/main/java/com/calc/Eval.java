@@ -38,7 +38,6 @@ public class Eval extends Command {
                     variables.createVariable(l.getToken().getName(), value);
                     return new Result(value);
                 } else if (l.getToken().getType() == Type.FUN){
-                    Node expression = r;
                     functions.createFunction(l.getToken().getName(), new Function(l.getToken().getArgs(), r));
                     return new Result(0);
                 }
@@ -61,6 +60,8 @@ public class Eval extends Command {
                     throw new ArithmeticException("/ by 0");
                 }
                 return new Result(eval(l, variables, functions).getVal() / rEval);
+            case POWER:
+                return new Result((float)Math.pow(eval(l, variables, functions).getVal(), eval(r, variables, functions).getVal()));
             default:
                 return new Result(0);
         }

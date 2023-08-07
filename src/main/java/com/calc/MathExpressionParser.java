@@ -13,9 +13,11 @@ import static com.calc.Type.*;
 <term> -> <factor> <"+"> <term>
 <term> -> <factor> <"-"> <term>
 <term> -> <factor>
-<factor> -> <number> <"*"> <factor>
-<factor> -> <number> <"/"> <factor>
-<factor> -> <number>
+<factor> -> <power> <"*"> <factor>
+<factor> -> <power> <"/"> <factor>
+<factor> -> <power>
+<power> -> <number> ^ <power>
+<power> -> <number>
 <number> -> <numeric>
 <number> -> <variable>
 <number> -> <function>
@@ -86,12 +88,36 @@ public class MathExpressionParser {
         }
     }
 
+    private Node parsePower(PushBackLexer lex){
+        ArrayList<Node> numbers = new ArrayList<>();
+        numbers.add(parseNumber(lex));
+        Token nxt = lex.nextToken();
+        while (nxt.getType() == POWER){
+            Node number = parseNumber(lex);
+            numbers.add(number);
+            nxt = lex.nextToken();
+            if (nxt.getType() == CLOSING_BR || nxt.getType() == COMMA || nxt.getType() == ADD || nxt.getType() == SUB ||
+                    nxt.getType() == MUL || nxt.getType() == DIV || nxt.getType() == ASS){
+                lex.returnToPrevPos();
+                return new Node(numbers, new Token(POWER));
+            }
+        }
+        if (nxt.getType() == CLOSING_BR || nxt.getType() == COMMA || nxt.getType() == ADD || nxt.getType() == SUB ||
+                nxt.getType() == MUL || nxt.getType() == DIV || nxt.getType() == ASS){
+            lex.returnToPrevPos();
+            return new Node(numbers, new Token(POWER));
+        } else if (nxt.getType() != END){
+            throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV", "POWER");
+        }
+        return new Node(numbers, new Token(POWER));
+    }
+
     private Node parseFactor(PushBackLexer lex){
-        Node factor = parseNumber(lex);
+        Node factor = parsePower(lex);
         Token nxt = lex.nextToken();
         while (nxt.getType() == MUL || nxt.getType() == DIV){
-            Node number = parseNumber(lex);
-            factor = new Node(nxt, factor, number);
+            Node power = parsePower(lex);
+            factor = new Node(nxt, factor, power);
             nxt = lex.nextToken();
             if (nxt.getType() == ADD || nxt.getType() == SUB || nxt.getType() == ASS || nxt.getType() == CLOSING_BR || nxt.getType() == COMMA){
                 lex.returnToPrevPos();
@@ -102,7 +128,7 @@ public class MathExpressionParser {
             lex.returnToPrevPos();
             return factor;
         } else if (nxt.getType() != END){
-            throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV");
+            throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV", "POWER");
         }
         return factor;
     }
@@ -123,7 +149,7 @@ public class MathExpressionParser {
             lex.returnToPrevPos();
             return term;
         } else if (nxt.getType() != END){
-            throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV");
+            throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV", "POWER");
         }
         return term;
     }
@@ -137,11 +163,11 @@ public class MathExpressionParser {
         boolean wasVariable = terms.get(0).getToken().getType() == VAR;
         while (nxt.getType() == Type.ASS){
             if (wasTerm || (wasFunction && wasVariable)){
-                throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV", "END");
+                throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV", "POWER", "END");
             }
             Node term = parseTerm(lex);
             terms.add(term);
-            wasTerm = wasTerm || wasFunction || (terms.get(terms.size()-1).getToken().getType() != VAR) && (terms.get(terms.size()-1).getToken().getType() != FUN);
+            wasTerm = wasTerm || wasFunction || ((terms.get(terms.size()-1).getToken().getType() != VAR) && (terms.get(terms.size()-1).getToken().getType() != FUN));
             wasFunction = wasFunction || terms.get(terms.size()-1).getToken().getType() == FUN;
             wasVariable = wasVariable || terms.get(terms.size()-1).getToken().getType() == VAR;
             nxt = lex.nextToken();

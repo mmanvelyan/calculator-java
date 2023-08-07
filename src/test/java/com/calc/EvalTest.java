@@ -19,10 +19,17 @@ public class EvalTest {
     public void add() {
         Assertions.assertEquals(5.0, calculate("2+3"));
     }
+
     @Test
     public void mul() {
         Assertions.assertEquals(6.0, calculate("2*3"));
     }
+
+    @Test
+    public void power() {
+        Assertions.assertEquals(8.0, calculate("2^3"));
+    }
+
     @Test
     public void sub() {
         Assertions.assertEquals(-1.0, calculate("2-3"));
@@ -32,7 +39,6 @@ public class EvalTest {
     public void leadingMinus() {
         Assertions.assertEquals(1.0, calculate("-2+3"));
     }
-
 
     @Test
     public void div() {
