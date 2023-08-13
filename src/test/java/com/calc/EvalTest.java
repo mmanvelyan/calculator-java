@@ -10,8 +10,7 @@ public class EvalTest {
         Variables variables = new Variables();
         Functions functions = new Functions();
         Node tree = calc.parse(s);
-        Eval e = new Eval();
-        Result res = e.execute(tree, variables, functions);
+        Result res = tree.eval(variables, functions);
         return res.getVal();
     }
     
@@ -120,7 +119,7 @@ public class EvalTest {
     public void wrongVariableNameDigitFirst() {
         UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("2x = 5"));
         Assertions.assertEquals(1, thrown.getPos());
-        Assertions.assertEquals(Type.VAR, thrown.getToken().getType());
+        Assertions.assertEquals(Type.NAME, thrown.getToken().getType());
     }
 
     @Test
@@ -152,6 +151,11 @@ public class EvalTest {
     @Test
     public void subOrder() {
         Assertions.assertEquals(0.0, calculate("5-2-3"));
+    }
+
+    @Test
+    public void powerOrder() {
+        Assertions.assertEquals(262144, calculate("4^3^2"));
     }
 
     @Test

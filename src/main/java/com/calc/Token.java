@@ -1,47 +1,28 @@
 package com.calc;
 
-import java.util.ArrayList;
-
 public class Token {
     private final Type type;
     private final String name;
     private final int pos;
     private final double val;
-    private final ArrayList<Node> args;
 
-    Token (Type type, String name, int pos, double val, ArrayList<Node> args){
+    Token (Type type, String name, int pos, double val){
         this.type = type;
         this.name = name;
         this.pos = pos;
         this.val = val;
-        this.args = new ArrayList<>(args);
-    }
-    Token (Token t){
-        this(t.type, t.name, t.pos, t.val, t.args);
     }
 
     Token (String s, int pos){
-        this(Type.VAR, s, pos, 0, new ArrayList<>());
-    }
-
-    Token (Type type) {
-        this(type, "", 0, 0, new ArrayList<>());
+        this(Type.NAME, s, pos, 0);
     }
 
     Token (Type type, int pos) {
-        this(type, "", pos, 0, new ArrayList<>());
-    }
-
-    Token (double val){
-        this(Type.NUM, "", 0, val, new ArrayList<>());
+        this(type, "", pos, 0);
     }
 
     Token (double val, int pos){
-        this(Type.NUM, "", pos, val, new ArrayList<>());
-    }
-
-    Token (String name, ArrayList<Node> args, int pos){
-        this(Type.FUN, name, pos, 0, args);
+        this(Type.NUM, "", pos, val);
     }
 
     public Type getType() {
@@ -60,17 +41,11 @@ public class Token {
         return pos;
     }
 
-    public ArrayList<Node> getArgs() {
-        return args;
-    }
-
 
     public String toString() {
         if (type == Type.NUM) {
             return String.valueOf(val);
-        } else if (type == Type.VAR) {
-            return name;
-        } else if (type == Type.FUN){
+        } else if (type == Type.NAME) {
             return name;
         } else {
             return type.toString();

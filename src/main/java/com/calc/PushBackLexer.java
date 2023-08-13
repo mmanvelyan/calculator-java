@@ -39,10 +39,15 @@ public class PushBackLexer implements Lexer {
     }
 
     public void returnToPrevPos(){
-        if (rollbackLevel == maxRollback){
+        returnToPrevPos(1);
+    }
+
+    public void returnToPrevPos(int count){
+        if (rollbackLevel+count > maxRollback){
             throw new RollbackLevelException("Rollback level exceeded");
         }
-        log.debug("rollback");
-        rollbackLevel++;
+        log.debug("rollback "+count);
+        rollbackLevel += count;
     }
+
 }

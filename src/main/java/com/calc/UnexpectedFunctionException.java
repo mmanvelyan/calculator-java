@@ -18,8 +18,8 @@ public class UnexpectedFunctionException extends RuntimeException implements Pos
         return pos;
     }
 
-    public UnexpectedFunctionException(Token var){
-        this.pos = var.getPos();
-        this.name = var.getName();
+    public UnexpectedFunctionException(String name, int pos){
+        this.pos = pos;
+        this.name = name;
     }
 }

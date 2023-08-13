@@ -3,7 +3,7 @@ package com.calc;
 
 public enum Type {
     NUM("number"),
-    VAR("variable"),
+    NAME("name"),
     ADD("+"),
     SUB("-"),
     MUL("*"),
@@ -13,23 +13,8 @@ public enum Type {
     END("END"),
     ASS("="),
     INV("invalid symbol"),
-    FUN("function"),
     COMMA(","),
-    POWER("^"),
-
-    SQRT("sqrt"),
-    EXP("exp"),
-    LN("ln"),
-    LG("lg"),
-    LOG("log"),
-    SIN("sin"),
-    COS("cos"),
-    TAN("tan"),
-    ARCSIN("arcsin"),
-    ARCCOS("arccos"),
-    ARCTAN("arctan"),
-    ABS("abs"),
-    MOD("mod");
+    POWER("^");
 
     final private String description;
     Type(String description){

@@ -3,7 +3,7 @@
 3. SRP
 4. Pattern Visitor
 5. logging
-6. Pattern Decorator
++6. Pattern Decorator
 +7. UnexpectedTokenException - System.out, move to catch (UnexpectedTokenException)
 +8. Lexer Decorator
 +8.1 PushBackLexerTest
@@ -12,4 +12,4 @@
 11. обратная польская запись (Visitor)
 12. Pattern Command
 13. Abstract factory
-14. Function tests
++14. Function tests

@@ -7,21 +7,21 @@ import static com.calc.Type.*;
 /*
 <query> -> <command> # <expression>
 <query> -> <expression>
-<expression> -> <variable> <"="> <expression>
-<expression> -> <function> <"="> <term>
-<expression> -> <term>
-<term> -> <factor> <"+"> <term>
-<term> -> <factor> <"-"> <term>
+
+<statement> -> <term>
+<statement> -> <definition> = <statement>
+<term> -> <factor> + <term>
+<term> -> <factor> - <term>
 <term> -> <factor>
-<factor> -> <power> <"*"> <factor>
-<factor> -> <power> <"/"> <factor>
+<factor> -> <power> * <factor>
+<factor> -> <power> / <factor>
 <factor> -> <power>
 <power> -> <number> ^ <power>
 <power> -> <number>
 <number> -> <numeric>
 <number> -> <variable>
 <number> -> <function>
-<number> -> <"("> <expression> <")">
+<number> -> ( <expression> )
 <functionVal> -> <variable> ( <functionValArgs> )
 <functionAss> -> <variable> ( <functionAssArgs> )
 <functionValArgs> -> <expression> , <functionValArgs>
@@ -34,11 +34,11 @@ public class MathExpressionParser {
 
     private ArrayList<Node> parseArgs(PushBackLexer lex) {
         ArrayList<Node> args = new ArrayList<>();
-        Node arg = parseExpression(lex);
+        Node arg = parseTerm(lex);
         args.add(arg);
         Token nxt = lex.nextToken();
         while (nxt.getType() == COMMA){
-            arg = parseExpression(lex);
+            arg = parseTerm(lex);
             args.add(arg);
             nxt = lex.nextToken();
             if (nxt.getType() == CLOSING_BR){
@@ -59,57 +59,50 @@ public class MathExpressionParser {
     private Node parseNumber(PushBackLexer lex){
         Token nxt = lex.nextToken();
         if (nxt.getType() == SUB){
-            return new Node(nxt, new Node(new Token(0), null, null), parseNumber(lex));
+            return new BinaryOperatorNode(SUB, new NumberNode(0), parseNumber(lex));
         } else if (nxt.getType() == OPEN_BR){
-            Node expression = parseExpression(lex);
+            Node expression = parseTerm(lex);
             nxt = lex.nextToken();
             if (nxt.getType() != CLOSING_BR){
                 throw new UnexpectedTokenException(nxt, ")");
             }
             return expression;
         } else if (nxt.getType() == NUM) {
-            return new Node(nxt, null, null);
-        } else if (nxt.getType() == VAR) {
-                Token nxtFun = lex.nextToken();
-                if (nxtFun.getType() == OPEN_BR){
-                    ArrayList<Node> args = parseArgs(lex);
-                    nxtFun = lex.nextToken();
-                    if (nxtFun.getType() == CLOSING_BR){
-                        return new Node(new Token(nxt.getName(), args, nxt.getPos()), null, null);
-                    } else {
-                        throw new UnexpectedTokenException(nxt, ")");
-                    }
+            return new NumberNode(nxt.getVal());
+        } else if (nxt.getType() == NAME) {
+            Token nxtFun = lex.nextToken();
+            if (nxtFun.getType() == OPEN_BR){
+                ArrayList<Node> args = parseArgs(lex);
+                nxtFun = lex.nextToken();
+                if (nxtFun.getType() == CLOSING_BR){
+                    return new FunctionCallNode(args, nxt.getName(), nxt.getPos());
                 } else {
-                    lex.returnToPrevPos();
-                    return new Node(nxt, null, null);
+                    throw new UnexpectedTokenException(nxt, ")");
                 }
+            } else {
+                lex.returnToPrevPos();
+                return new VariableNode(nxt.getName(), nxt.getPos());
+            }
         } else {
-                throw new UnexpectedTokenException(nxt, "(", "NUM", "VAR");
+            throw new UnexpectedTokenException(nxt, "(", "NUM", "VAR");
         }
     }
 
     private Node parsePower(PushBackLexer lex){
-        ArrayList<Node> numbers = new ArrayList<>();
-        numbers.add(parseNumber(lex));
+        Node number = parseNumber(lex);
         Token nxt = lex.nextToken();
-        while (nxt.getType() == POWER){
-            Node number = parseNumber(lex);
-            numbers.add(number);
-            nxt = lex.nextToken();
-            if (nxt.getType() == CLOSING_BR || nxt.getType() == COMMA || nxt.getType() == ADD || nxt.getType() == SUB ||
-                    nxt.getType() == MUL || nxt.getType() == DIV || nxt.getType() == ASS){
-                lex.returnToPrevPos();
-                return new Node(numbers, new Token(POWER));
-            }
-        }
-        if (nxt.getType() == CLOSING_BR || nxt.getType() == COMMA || nxt.getType() == ADD || nxt.getType() == SUB ||
-                nxt.getType() == MUL || nxt.getType() == DIV || nxt.getType() == ASS){
+        Type tokenType = nxt.getType();
+        if (tokenType == POWER){
+            Node power = parsePower(lex);
+            number = new BinaryOperatorNode(POWER, number, power);
+        } else if (tokenType == CLOSING_BR || tokenType == COMMA || tokenType == ADD || tokenType == SUB ||
+                tokenType == MUL || tokenType == DIV || tokenType == ASS){
             lex.returnToPrevPos();
-            return new Node(numbers, new Token(POWER));
-        } else if (nxt.getType() != END){
+            return number;
+        } else if (tokenType != END){
             throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV", "POWER");
         }
-        return new Node(numbers, new Token(POWER));
+        return number;
     }
 
     private Node parseFactor(PushBackLexer lex){
@@ -117,7 +110,7 @@ public class MathExpressionParser {
         Token nxt = lex.nextToken();
         while (nxt.getType() == MUL || nxt.getType() == DIV){
             Node power = parsePower(lex);
-            factor = new Node(nxt, factor, power);
+            factor = new BinaryOperatorNode(nxt.getType(), factor, power);
             nxt = lex.nextToken();
             if (nxt.getType() == ADD || nxt.getType() == SUB || nxt.getType() == ASS || nxt.getType() == CLOSING_BR || nxt.getType() == COMMA){
                 lex.returnToPrevPos();
@@ -138,7 +131,7 @@ public class MathExpressionParser {
         Token nxt = lex.nextToken();
         while (nxt.getType() == ADD || nxt.getType() == SUB){
             Node factor = parseFactor(lex);
-            term = new Node(nxt, term, factor);
+            term = new BinaryOperatorNode(nxt.getType(), term, factor);
             nxt = lex.nextToken();
             if (nxt.getType() == ASS || nxt.getType() == CLOSING_BR || nxt.getType() == COMMA){
                 lex.returnToPrevPos();
@@ -154,40 +147,64 @@ public class MathExpressionParser {
         return term;
     }
 
-    private Node parseExpression(PushBackLexer lex){
-        ArrayList<Node> terms = new ArrayList<>();
-        terms.add(parseTerm(lex));
+    private Node parseStatement(PushBackLexer lex){
+
+        int tokenCount = 0;
         Token nxt = lex.nextToken();
-        boolean wasTerm = (terms.get(0).getToken().getType() != VAR) && (terms.get(0).getToken().getType() != FUN);
-        boolean wasFunction = terms.get(0).getToken().getType() == FUN;
-        boolean wasVariable = terms.get(0).getToken().getType() == VAR;
-        while (nxt.getType() == Type.ASS){
-            if (wasTerm || (wasFunction && wasVariable)){
-                throw new UnexpectedTokenException(nxt, "ADD", "SUB", "MUL", "DIV", "POWER", "END");
-            }
-            Node term = parseTerm(lex);
-            terms.add(term);
-            wasTerm = wasTerm || wasFunction || ((terms.get(terms.size()-1).getToken().getType() != VAR) && (terms.get(terms.size()-1).getToken().getType() != FUN));
-            wasFunction = wasFunction || terms.get(terms.size()-1).getToken().getType() == FUN;
-            wasVariable = wasVariable || terms.get(terms.size()-1).getToken().getType() == VAR;
-            nxt = lex.nextToken();
-            if (nxt.getType() == CLOSING_BR || nxt.getType() == COMMA){
-                lex.returnToPrevPos();
-                return new Node(terms, new Token(ASS));
-            }
-        }
-        if (nxt.getType() == CLOSING_BR || nxt.getType() == COMMA){
+        tokenCount++;
+        if (nxt.getType() != NAME){
             lex.returnToPrevPos();
-            return new Node(terms, new Token(ASS));
-        } else if (nxt.getType() != END){
-            throw new UnexpectedTokenException(nxt, "END");
+            return parseTerm(lex);
         }
-        return new Node(terms, new Token(ASS));
+        String name = nxt.getName();
+
+        nxt = lex.nextToken();
+        tokenCount++;
+        if (nxt.getType() == OPEN_BR){
+            ArrayList<String> argNames = new ArrayList<>();
+            nxt = lex.nextToken();
+            tokenCount++;
+            while (nxt.getType() == NAME){
+                argNames.add(nxt.getName());
+                nxt = lex.nextToken();
+                tokenCount++;
+                if (nxt.getType() == CLOSING_BR) {
+                    break;
+                } else if (nxt.getType() == COMMA){
+                    nxt = lex.nextToken();
+                    tokenCount++;
+                } else {
+                    lex.returnToPrevPos(tokenCount);
+                    return parseTerm(lex);
+                }
+            }
+            if (nxt.getType() != CLOSING_BR){
+                lex.returnToPrevPos(tokenCount);
+                return parseTerm(lex);
+            }
+            nxt = lex.nextToken();
+            tokenCount++;
+            if (nxt.getType() == ASS){
+                Node statement = parseStatement(lex);
+                return new DefineNode(name, argNames, statement);
+            } else {
+                lex.returnToPrevPos(tokenCount);
+                return parseTerm(lex);
+            }
+        } else {
+            if (nxt.getType() == ASS){
+                Node statement = parseStatement(lex);
+                return new DefineNode(name, statement);
+            } else {
+                lex.returnToPrevPos(tokenCount);
+                return parseTerm(lex);
+            }
+        }
     }
 
     public Node parse(String s){
-        PushBackLexer lex = new PushBackLexer(new BaseLexer(s));
-        Node tree = parseExpression(lex);
+        PushBackLexer lex = new PushBackLexer(new BaseLexer(s), Integer.MAX_VALUE);
+        Node tree = parseStatement(lex);
         Token nxt = lex.nextToken();
         if (nxt.getType() != END){
             throw new UnexpectedTokenException(nxt, "END");

@@ -14,7 +14,7 @@ public class Program {
             try {
                 Query query = parser.parse(s);
                 Output.printResult(query.getCommand().execute(query.getExpression(), variables, functions));
-            } catch (UnexpectedTokenException | UnexpectedVariableException | UnexpectedFunctionException | UnexpectedArgumentException | FunctionCycleException e) {
+            } catch (UnexpectedTokenException | UnexpectedVariableException | UnexpectedFunctionException | FunctionCycleException e) {
                 Output.printPositionException(e);
             } catch (Exception e){
                 Output.printException(e);

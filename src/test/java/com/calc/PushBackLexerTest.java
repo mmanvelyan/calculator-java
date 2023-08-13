@@ -38,7 +38,7 @@ public class PushBackLexerTest {
     public void nextTokenVAR(){
         lex = new PushBackLexer(new BaseLexer("xX374y"));
         Token nxt = lex.nextToken();
-        assertEquals(Type.VAR, nxt.getType());
+        assertEquals(Type.NAME, nxt.getType());
         assertEquals("xX374y", nxt.getName());
     }
 
