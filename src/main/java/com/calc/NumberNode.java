@@ -8,12 +8,12 @@ public class NumberNode implements Node{
         this.value = value;
     }
 
-    public Result eval(Variables variables, Functions functions){
-        return new Result(value);
+    public double getValue() {
+        return value;
     }
 
-    public String rpn(Variables variables, Functions functions){
-        return value + " ";
+    public Result accept(NodeVisitor v, Variables variables, Functions functions){
+        return v.accept(this, variables, functions);
     }
 
 }

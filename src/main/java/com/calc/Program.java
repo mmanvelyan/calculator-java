@@ -13,7 +13,7 @@ public class Program {
             String s = in.nextLine();
             try {
                 Query query = parser.parse(s);
-                Output.printResult(query.getCommand().execute(query.getExpression(), variables, functions));
+                Output.printResult(query.getExpression().accept(query.getCommand(), variables, functions));
             } catch (UnexpectedTokenException | UnexpectedVariableException | UnexpectedFunctionException | FunctionCycleException e) {
                 Output.printPositionException(e);
             } catch (Exception e){
@@ -21,5 +21,6 @@ public class Program {
             }
         }
     }
+
 }
 

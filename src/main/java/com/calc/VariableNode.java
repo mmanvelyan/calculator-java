@@ -9,15 +9,16 @@ public class VariableNode implements Node {
         this.pos = pos;
     }
 
-    public Result eval(Variables variables, Functions functions){
-        if (variables.getValue(name) == null) {
-            throw new UnexpectedVariableException(name, pos);
-        }
-        return new Result(variables.getValue(name));
+    public String getName() {
+        return name;
     }
 
-    public String rpn(Variables variables, Functions functions){
-        return name+" ";
+    public int getPos() {
+        return pos;
+    }
+
+    public Result accept(NodeVisitor visitor, Variables variables, Functions functions){
+        return visitor.accept(this, variables, functions);
     }
 
 }

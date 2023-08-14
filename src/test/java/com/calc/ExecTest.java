@@ -19,9 +19,9 @@ public class ExecTest {
 
     private Result execute(String s){
         Query query = queryParser.parse(s);
-        Command command = query.getCommand();
+        NodeVisitor command = query.getCommand();
         Node expression = query.getExpression();
-        return command.execute(expression, variables, functions);
+        return expression.accept(command, variables, functions);
     }
 
     @Test

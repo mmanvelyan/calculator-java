@@ -1,14 +1,16 @@
 package com.calc;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class DefineNode implements Node {
 
     private final Node expression;
     private final String name;
-    private final ArrayList<String> argNames;
+    private final List<String> argNames;
 
-    public DefineNode(String name, ArrayList<String> argNames, Node expression){
+    public DefineNode(String name, List<String> argNames, Node expression){
         this.expression = expression;
         this.name = name;
         this.argNames = argNames;
@@ -20,24 +22,20 @@ public class DefineNode implements Node {
         this.argNames = new ArrayList<>();
     }
 
-    public Result eval(Variables variables, Functions functions) {
-        if (argNames.size() == 0){
-            Result result = expression.eval(variables, functions);
-            variables.createVariable(name, result.getVal());
-            return result;
-        } else {
-            Function newFun = new Function(argNames, expression);
-            functions.createFunction(name, newFun);
-            return new Result(0);
-        }
+    public Node getExpression() {
+        return expression;
     }
 
-    public String rpn(Variables variables, Functions functions) {
-        String res = name;
-        if (argNames.size() > 0){
-            res += "("+String.join(" , ", argNames)+")";
-        }
-        return res+" ";
+    public String getName() {
+        return name;
+    }
+
+    public List<String> getArgNames() {
+        return Collections.unmodifiableList(argNames);
+    }
+
+    public Result accept(NodeVisitor visitor, Variables variables, Functions functions){
+        return visitor.accept(this, variables, functions);
     }
 
 }

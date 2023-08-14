@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FunctionsTest {
 
-    private Variables variables = new Variables();
-    private Functions functions = new Functions();
+    private final Variables variables = new Variables();
+    private final Functions functions = new Functions();
 
     private void assertEquals(float expected, Result actual){
         Assertions.assertEquals(expected, actual.getVal());
@@ -20,9 +20,9 @@ public class FunctionsTest {
     private Result execute(String s){
         QueryParser queryParser = new QueryParser();
         Query query = queryParser.parse(s);
-        Command command = query.getCommand();
+        NodeVisitor command = query.getCommand();
         Node expression = query.getExpression();
-        return command.execute(expression, variables, functions);
+        return expression.accept(command, variables, functions);
     }
 
     @Test

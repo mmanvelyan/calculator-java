@@ -2,17 +2,18 @@ package com.calc;
 
 public class Query {
 
-    private final Command command;
+    private final NodeVisitor command;
     private final Node expression;
 
-    public Query(Command command, Node expression){
+    public Query(NodeVisitor command, Node expression){
         this.command = command;
         this.expression = expression;
     }
 
-    public Command getCommand() {
+    public NodeVisitor getCommand() {
         return command;
     }
+
     public Node getExpression() {
         return expression;
     }

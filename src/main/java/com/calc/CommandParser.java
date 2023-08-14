@@ -2,14 +2,15 @@ package com.calc;
 
 public class CommandParser {
 
-    public Command parse(String s){
+    public NodeVisitor parse(String s){
         String command = s.replace(" ", "");
         if (command.equals("rpn")){
-            return new ReversePolishNotation();
+            return new ReversePolishNotationNodeVisitor();
         } else if (command.equals("eval")){
-            return new Eval();
+            return new EvalNodeVisitor();
         } else {
             throw new UnexpectedCommandException(command);
         }
     }
+
 }

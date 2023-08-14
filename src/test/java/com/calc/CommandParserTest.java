@@ -9,12 +9,12 @@ public class CommandParserTest {
 
     @Test
     public void evalCommand(){
-        Assertions.assertEquals(Eval.class, commandParser.parse("eval").getClass());
+        Assertions.assertEquals(EvalNodeVisitor.class, commandParser.parse("eval").getClass());
     }
 
     @Test
     public void rpnCommand(){
-        Assertions.assertEquals(ReversePolishNotation.class, commandParser.parse("rpn").getClass());
+        Assertions.assertEquals(ReversePolishNotationNodeVisitor.class, commandParser.parse("rpn").getClass());
     }
 
     @Test

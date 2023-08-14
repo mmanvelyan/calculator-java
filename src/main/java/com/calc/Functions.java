@@ -2,6 +2,7 @@ package com.calc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Functions {
@@ -23,7 +24,7 @@ public class Functions {
     }
 
     public void createFunction(String name, Function function){
-        ArrayList<String> args = function.getArgs();
+        List<String> args = function.getArgs();
         Variables functionVariables = new Variables();
         for (String n : args){
             functionVariables.createVariable(n, 0);
@@ -31,7 +32,7 @@ public class Functions {
         Map<String, Function> newFunctions = new HashMap<>(functions);
         newFunctions.remove(name);
         try {
-            function.getExpression().eval(functionVariables, new Functions(newFunctions));
+            function.getExpression().accept(new EvalNodeVisitor(), functionVariables, new Functions(newFunctions));
         } catch (UnexpectedFunctionException ex){
             if (functions.get(ex.getName()) == null){
                 throw ex;

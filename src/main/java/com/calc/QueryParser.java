@@ -18,7 +18,7 @@ public class QueryParser {
         String fixedExpressionPart = fixPosition(expressionPart, separatorPosition+1);
 
         CommandParser commandParser = new CommandParser();
-        Command command = commandParser.parse(commandPart);
+        NodeVisitor command = commandParser.parse(commandPart);
         MathExpressionParser expressionParser = new MathExpressionParser();
         Node expression = expressionParser.parse(fixedExpressionPart);
         return new Query(command, expression);

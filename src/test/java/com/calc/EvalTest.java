@@ -10,7 +10,8 @@ public class EvalTest {
         Variables variables = new Variables();
         Functions functions = new Functions();
         Node tree = calc.parse(s);
-        Result res = tree.eval(variables, functions);
+        EvalNodeVisitor eval = new EvalNodeVisitor();
+        Result res = tree.accept(eval, variables, functions);
         return res.getVal();
     }
     
