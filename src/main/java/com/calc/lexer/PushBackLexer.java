@@ -1,6 +1,7 @@
-package com.calc;
+package com.calc.lexer;
 
 import java.util.LinkedList;
+
 import org.apache.log4j.Logger;
 
 public class PushBackLexer implements Lexer {

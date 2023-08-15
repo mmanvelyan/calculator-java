@@ -1,8 +1,11 @@
-package com.calc;
+package com.calc.parser;
+
+import com.calc.lexer.*;
+import com.calc.nodes.*;
 
 import java.util.ArrayList;
 
-import static com.calc.Type.*;
+import static com.calc.lexer.Type.*;
 
 /*
 <query> -> <command> # <expression>

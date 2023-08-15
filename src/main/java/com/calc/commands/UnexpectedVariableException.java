@@ -1,4 +1,6 @@
-package com.calc;
+package com.calc.commands;
+
+import com.calc.PositionException;
 
 public class UnexpectedVariableException extends RuntimeException implements PositionException {
     private final int pos;

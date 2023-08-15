@@ -1,6 +1,9 @@
 package com.calc;
 
-import java.util.ArrayList;
+import com.calc.commands.EvalNodeVisitor;
+import com.calc.commands.FunctionCycleException;
+import com.calc.commands.UnexpectedFunctionException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

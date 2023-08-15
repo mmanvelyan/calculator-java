@@ -1,4 +1,8 @@
-package com.calc;
+package com.calc.nodes;
+
+import com.calc.*;
+import com.calc.commands.NodeVisitor;
+import com.calc.commands.Result;
 
 import java.util.Collections;
 import java.util.List;

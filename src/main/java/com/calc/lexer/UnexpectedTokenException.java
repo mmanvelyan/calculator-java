@@ -1,4 +1,7 @@
-package com.calc;
+package com.calc.lexer;
+
+import com.calc.PositionException;
+import com.calc.lexer.Token;
 
 import java.util.ArrayList;
 import java.util.Arrays;

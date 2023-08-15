@@ -1,5 +1,12 @@
 package com.calc;
 
+import com.calc.commands.FunctionCycleException;
+import com.calc.commands.UnexpectedFunctionException;
+import com.calc.commands.UnexpectedVariableException;
+import com.calc.parser.Query;
+import com.calc.parser.QueryParser;
+import com.calc.lexer.UnexpectedTokenException;
+
 import java.util.Scanner;
 
 public class Program {
@@ -14,7 +21,8 @@ public class Program {
             try {
                 Query query = parser.parse(s);
                 Output.printResult(query.getExpression().accept(query.getCommand(), variables, functions));
-            } catch (UnexpectedTokenException | UnexpectedVariableException | UnexpectedFunctionException | FunctionCycleException e) {
+            } catch (UnexpectedTokenException | UnexpectedVariableException | UnexpectedFunctionException |
+                     FunctionCycleException e) {
                 Output.printPositionException(e);
             } catch (Exception e){
                 Output.printException(e);

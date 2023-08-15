@@ -1,5 +1,11 @@
 package com.calc;
 
+import com.calc.commands.*;
+import com.calc.lexer.Type;
+import com.calc.nodes.Node;
+import com.calc.parser.Query;
+import com.calc.parser.QueryParser;
+import com.calc.lexer.UnexpectedTokenException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

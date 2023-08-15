@@ -1,6 +1,11 @@
-package com.calc;
+package com.calc.nodes;
 
-public class BinaryOperatorNode implements Node{
+import com.calc.*;
+import com.calc.commands.NodeVisitor;
+import com.calc.commands.Result;
+import com.calc.lexer.Type;
+
+public class BinaryOperatorNode implements Node {
     private final Type operator;
     private final Node l;
     private final Node r;

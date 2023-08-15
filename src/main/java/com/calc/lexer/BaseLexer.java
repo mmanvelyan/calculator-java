@@ -1,6 +1,6 @@
-package com.calc;
+package com.calc.lexer;
 
-import static com.calc.Type.*;
+import static com.calc.lexer.Type.*;
 
 public class BaseLexer implements Lexer {
     private final String s;

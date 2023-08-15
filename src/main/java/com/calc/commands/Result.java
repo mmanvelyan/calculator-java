@@ -1,4 +1,4 @@
-package com.calc;
+package com.calc.commands;
 
 public class Result {
     private final double val;

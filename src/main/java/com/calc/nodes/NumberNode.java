@@ -1,6 +1,10 @@
-package com.calc;
+package com.calc.nodes;
 
-public class NumberNode implements Node{
+import com.calc.*;
+import com.calc.commands.NodeVisitor;
+import com.calc.commands.Result;
+
+public class NumberNode implements Node {
 
     private final double value;
 

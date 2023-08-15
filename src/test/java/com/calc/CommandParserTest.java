@@ -1,5 +1,9 @@
 package com.calc;
 
+import com.calc.commands.EvalNodeVisitor;
+import com.calc.commands.ReversePolishNotationNodeVisitor;
+import com.calc.parser.CommandParser;
+import com.calc.parser.UnexpectedCommandException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,8 @@
-package com.calc;
+package com.calc.commands;
+
+import com.calc.Functions;
+import com.calc.Variables;
+import com.calc.nodes.*;
 
 public interface NodeVisitor {
     Result accept(BinaryOperatorNode node, Variables variables, Functions functions);

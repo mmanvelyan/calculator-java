@@ -1,5 +1,8 @@
 package com.calc;
 
+import com.calc.commands.Result;
+import com.calc.commands.ResultType;
+
 public class Output {
 
     public static void printPositionException(PositionException e){

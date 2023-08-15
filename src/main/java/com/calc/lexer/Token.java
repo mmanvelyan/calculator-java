@@ -1,4 +1,4 @@
-package com.calc;
+package com.calc.lexer;
 
 public class Token {
     private final Type type;

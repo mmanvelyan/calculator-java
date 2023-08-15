@@ -1,4 +1,9 @@
-package com.calc;
+package com.calc.nodes;
+
+import com.calc.Functions;
+import com.calc.commands.NodeVisitor;
+import com.calc.commands.Result;
+import com.calc.Variables;
 
 public class VariableNode implements Node {
     private final String name;

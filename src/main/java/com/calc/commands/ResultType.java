@@ -1,4 +1,4 @@
-package com.calc;
+package com.calc.commands;
 
 public enum ResultType {
     STR,

@@ -1,4 +1,4 @@
-package com.calc;
+package com.calc.parser;
 
 public class UnexpectedCommandException extends RuntimeException {
 

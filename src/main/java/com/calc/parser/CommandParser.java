@@ -1,4 +1,8 @@
-package com.calc;
+package com.calc.parser;
+
+import com.calc.commands.EvalNodeVisitor;
+import com.calc.commands.NodeVisitor;
+import com.calc.commands.ReversePolishNotationNodeVisitor;
 
 public class CommandParser {
 

@@ -1,6 +1,8 @@
-package com.calc;
+package com.calc.commands;
 
-public class UnexpectedFunctionException extends RuntimeException implements PositionException{
+import com.calc.PositionException;
+
+public class UnexpectedFunctionException extends RuntimeException implements PositionException {
 
     private final int pos;
 
