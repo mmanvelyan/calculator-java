@@ -1,4 +1,4 @@
-package com.calc.commands;
+package com.calc.command;
 
 import com.calc.PositionException;
 

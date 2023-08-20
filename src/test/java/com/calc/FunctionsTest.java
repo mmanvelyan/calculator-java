@@ -1,8 +1,8 @@
 package com.calc;
 
-import com.calc.commands.*;
+import com.calc.command.*;
 import com.calc.lexer.Type;
-import com.calc.nodes.Node;
+import com.calc.node.Node;
 import com.calc.parser.Query;
 import com.calc.parser.QueryParser;
 import com.calc.lexer.UnexpectedTokenException;
@@ -42,8 +42,8 @@ public class FunctionsTest {
     @Test
     public void unexpectedFunctionArguments(){
         assertEquals(0, execute("f(x) = x"));
-        UnexpectedFunctionException thrown = assertThrows(UnexpectedFunctionException.class, () -> execute("f(1, 2)"));
-        Assertions.assertEquals(0, thrown.getPos());
+        UnexpectedFunctionException thrown = assertThrows(UnexpectedFunctionException.class, () -> execute("eval strict # f(1, 2)"));
+        Assertions.assertEquals(14, thrown.getPos());
         Assertions.assertEquals("f", thrown.getName());
     }
 

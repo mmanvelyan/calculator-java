@@ -1,7 +1,7 @@
 package com.calc.parser;
 
-import com.calc.commands.NodeVisitor;
-import com.calc.nodes.Node;
+import com.calc.command.NodeVisitor;
+import com.calc.node.Node;
 
 public class Query {
 

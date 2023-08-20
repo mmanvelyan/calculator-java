@@ -1,7 +1,9 @@
 package com.calc;
 
-import com.calc.commands.Result;
-import com.calc.commands.ResultType;
+import com.calc.command.NodeVisitor;
+import com.calc.command.PrintNodeVisitor;
+import com.calc.command.Result;
+import com.calc.command.ResultType;
 
 public class Output {
 
@@ -21,8 +23,11 @@ public class Output {
     public static void printResult(Result er){
         if (er.getType() == ResultType.VAL) {
             System.out.println(er.getVal());
-        } else {
+        } else if (er.getType() == ResultType.STR){
             System.out.println(er.getStr());
+        } else {
+            NodeVisitor print = new PrintNodeVisitor();
+            System.out.println(er.getExpression().accept(print, new Variables(), new Functions()).getStr());
         }
     }
 }

@@ -1,9 +1,9 @@
 package com.calc;
 
-import com.calc.commands.NodeVisitor;
-import com.calc.commands.Result;
+import com.calc.command.NodeVisitor;
+import com.calc.command.Result;
 import com.calc.lexer.Type;
-import com.calc.nodes.Node;
+import com.calc.node.Node;
 import com.calc.parser.Query;
 import com.calc.parser.QueryParser;
 import com.calc.parser.UnexpectedCommandException;

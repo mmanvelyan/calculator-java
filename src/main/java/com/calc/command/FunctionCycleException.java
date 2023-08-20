@@ -1,7 +1,6 @@
-package com.calc.commands;
+package com.calc.command;
 
 import com.calc.PositionException;
-import com.calc.commands.UnexpectedFunctionException;
 
 public class FunctionCycleException extends RuntimeException implements PositionException {
 

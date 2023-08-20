@@ -1,7 +1,7 @@
 package com.calc.parser;
 
 import com.calc.lexer.*;
-import com.calc.nodes.*;
+import com.calc.node.*;
 
 import java.util.ArrayList;
 

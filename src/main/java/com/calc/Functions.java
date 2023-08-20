@@ -1,8 +1,8 @@
 package com.calc;
 
-import com.calc.commands.EvalNodeVisitor;
-import com.calc.commands.FunctionCycleException;
-import com.calc.commands.UnexpectedFunctionException;
+import com.calc.command.EvalStrictNodeVisitor;
+import com.calc.command.FunctionCycleException;
+import com.calc.command.UnexpectedFunctionException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +35,7 @@ public class Functions {
         Map<String, Function> newFunctions = new HashMap<>(functions);
         newFunctions.remove(name);
         try {
-            function.getExpression().accept(new EvalNodeVisitor(), functionVariables, new Functions(newFunctions));
+            function.getExpression().accept(new EvalStrictNodeVisitor(), functionVariables, new Functions(newFunctions));
         } catch (UnexpectedFunctionException ex){
             if (functions.get(ex.getName()) == null){
                 throw ex;

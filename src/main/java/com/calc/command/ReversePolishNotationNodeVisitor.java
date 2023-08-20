@@ -1,9 +1,9 @@
-package com.calc.commands;
+package com.calc.command;
 
 import com.calc.Functions;
 import com.calc.Variables;
 import com.calc.lexer.Type;
-import com.calc.nodes.*;
+import com.calc.node.*;
 
 import java.util.List;
 

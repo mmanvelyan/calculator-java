@@ -1,26 +1,37 @@
 package com.calc;
 
+import com.calc.command.EvalNodeVisitor;
+import com.calc.command.EvalStrictNodeVisitor;
+import com.calc.node.Node;
+import com.calc.node.NumberNode;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Variables {
-    private final Map<String, Double> values = new HashMap<>();
+    private final Map<String, Node> values = new HashMap<>();
 
     public Variables(){
         addCommonVariables();
     }
 
-    public Double getValue(String name){
-        return values.get(name);
+    public Node getValue(String name){
+        Node valueNode = values.get(name);
+        return valueNode;
     }
 
     public void createVariable(String name, double val){
+        Node valueNode = new NumberNode(val);
+        values.put(name, valueNode);
+    }
+
+    public void createVariable(String name, Node val){
         values.put(name, val);
     }
 
     private void addCommonVariables(){
-        values.put("pi", Math.PI);
-        values.put("e", Math.E);
-        values.put("degree", Math.PI/180);
+        createVariable("pi", Math.PI);
+        createVariable("e", Math.E);
+        createVariable("degree", Math.PI/180);
     }
 }

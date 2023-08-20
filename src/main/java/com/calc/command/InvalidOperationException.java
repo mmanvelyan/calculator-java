@@ -1,7 +1,7 @@
-package com.calc.commands;
+package com.calc.command;
 
 import com.calc.lexer.Type;
-import com.calc.nodes.Node;
+import com.calc.node.Node;
 
 public class InvalidOperationException extends RuntimeException {
 

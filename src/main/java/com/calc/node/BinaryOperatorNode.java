@@ -1,8 +1,8 @@
-package com.calc.nodes;
+package com.calc.node;
 
 import com.calc.*;
-import com.calc.commands.NodeVisitor;
-import com.calc.commands.Result;
+import com.calc.command.NodeVisitor;
+import com.calc.command.Result;
 import com.calc.lexer.Type;
 
 public class BinaryOperatorNode implements Node {

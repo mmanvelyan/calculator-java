@@ -1,8 +1,8 @@
 package com.calc;
 
-import com.calc.commands.FunctionCycleException;
-import com.calc.commands.UnexpectedFunctionException;
-import com.calc.commands.UnexpectedVariableException;
+import com.calc.command.FunctionCycleException;
+import com.calc.command.UnexpectedFunctionException;
+import com.calc.command.UnexpectedVariableException;
 import com.calc.parser.Query;
 import com.calc.parser.QueryParser;
 import com.calc.lexer.UnexpectedTokenException;

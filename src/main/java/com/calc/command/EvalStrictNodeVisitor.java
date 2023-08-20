@@ -1,12 +1,12 @@
-package com.calc.commands;
+package com.calc.command;
 
 import com.calc.*;
 import com.calc.lexer.Type;
-import com.calc.nodes.*;
+import com.calc.node.*;
 
 import java.util.List;
 
-public class EvalNodeVisitor implements NodeVisitor {
+public class EvalStrictNodeVisitor implements NodeVisitor {
 
     @Override
     public Result accept(BinaryOperatorNode node, Variables variables, Functions functions) {

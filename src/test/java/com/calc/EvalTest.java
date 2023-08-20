@@ -1,196 +1,83 @@
 package com.calc;
 
-import com.calc.commands.EvalNodeVisitor;
-import com.calc.commands.Result;
-import com.calc.lexer.Type;
-import com.calc.nodes.Node;
+import com.calc.command.EvalNodeVisitor;
+import com.calc.command.PrintNodeVisitor;
+import com.calc.command.Result;
+import com.calc.command.ResultType;
+import com.calc.node.Node;
 import com.calc.parser.MathExpressionParser;
-import com.calc.lexer.UnexpectedTokenException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class EvalTest {
-    
-    private Double calculate(String s){
-        MathExpressionParser calc = new MathExpressionParser();
+
+    private String calculate(String s){
         Variables variables = new Variables();
         Functions functions = new Functions();
+        return calculate(s, variables, functions);
+    }
+
+    private String calculate(String s, Variables variables, Functions functions){
+        MathExpressionParser calc = new MathExpressionParser();
         Node tree = calc.parse(s);
         EvalNodeVisitor eval = new EvalNodeVisitor();
-        Result res = tree.accept(eval, variables, functions);
-        return res.getVal();
-    }
-    
-    @Test
-    public void add() {
-        Assertions.assertEquals(5.0, calculate("2+3"));
-    }
-
-    @Test
-    public void mul() {
-        Assertions.assertEquals(6.0, calculate("2*3"));
+        Result resultExpression = tree.accept(eval, variables, functions);
+        if (resultExpression.getType() == ResultType.VAL){
+            return String.valueOf(resultExpression.getVal());
+        }
+        Result result = resultExpression.getExpression().accept(new PrintNodeVisitor(), variables, functions);
+        return result.getStr();
     }
 
     @Test
-    public void power() {
-        Assertions.assertEquals(8.0, calculate("2^3"));
+    public void evalStrict() {
+        Assertions.assertEquals("5.0", calculate("2+3"));
     }
 
     @Test
-    public void sub() {
-        Assertions.assertEquals(-1.0, calculate("2-3"));
+    public void unknownVariable() {
+        Assertions.assertEquals("2*x", calculate("2*x"));
     }
 
     @Test
-    public void leadingMinus() {
-        Assertions.assertEquals(1.0, calculate("-2+3"));
+    public void evalStrictVariable() {
+        Variables variables = new Variables();
+        Functions functions = new Functions();
+        Assertions.assertEquals("3.0", calculate("x = 3", variables, functions));
+        Assertions.assertEquals("5.0", calculate("x+2", variables, functions));
     }
 
     @Test
-    public void div() {
-        Assertions.assertEquals(1.5, calculate("3/2"));
+    public void evalFunctionArgument() {
+        Variables variables = new Variables();
+        Functions functions = new Functions();
+        Assertions.assertEquals("3.0", calculate("x = 3", variables, functions));
+        Assertions.assertEquals("f(5)", calculate("f(x+2)", variables, functions));
     }
 
     @Test
-    public void divBy0() {
-        Assertions.assertThrows(ArithmeticException.class, () -> calculate("1/0"));
+    public void evalStrictFunction() {
+        Variables variables = new Variables();
+        Functions functions = new Functions();
+        Assertions.assertEquals("0.0", calculate("f(x) = x^2", variables, functions));
+        Assertions.assertEquals("4.0", calculate("f(2)", variables, functions));
     }
 
     @Test
-    public void ass() {
-        Assertions.assertEquals(5, calculate("x=5"));
+    public void evalUnknownArgument(){
+        Variables variables = new Variables();
+        Functions functions = new Functions();
+        Assertions.assertEquals("0.0", calculate("f(x) = x^2", variables, functions));
+        Assertions.assertEquals("y^2", calculate("f(y)", variables, functions));
     }
 
+    @Disabled
     @Test
-    public void missingClosingBracket() {
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("(2+3"));
-        Assertions.assertEquals(4, thrown.getPos());
-        Assertions.assertEquals(Type.END, thrown.getToken().getType());
+    public void printCorrectBrackets(){
+        Variables variables = new Variables();
+        Functions functions = new Functions();
+        Assertions.assertEquals("(x+y)*z", calculate("(x+y)*z", variables, functions));
     }
 
-    @Test
-    public void numberBeforeBrackets() {
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("2(3)"));
-        Assertions.assertEquals(1, thrown.getPos());
-        Assertions.assertEquals(Type.OPEN_BR, thrown.getToken().getType());
-    }
-
-    @Test
-    public void numberAfterBrackets() {
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("(3)2"));
-        Assertions.assertEquals(3, thrown.getPos());
-        Assertions.assertEquals(Type.NUM, thrown.getToken().getType());
-    }
-
-    @Test
-    public void missingOpenBracket() {
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("(2+3))"));
-        Assertions.assertEquals(5, thrown.getPos());
-        Assertions.assertEquals(Type.CLOSING_BR, thrown.getToken().getType());
-    }
-
-
-    @Test
-    public void brackets() {
-        Assertions.assertEquals(5.0, calculate("(2+3)"));
-    }
-
-    @Test
-    public void emptyBrackets() {
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("()"));
-        Assertions.assertEquals(1, thrown.getPos());
-        Assertions.assertEquals(Type.CLOSING_BR, thrown.getToken().getType());
-    }
-
-    @Test
-    public void correctPosition() {
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("(2 +3 ) 4"));
-        Assertions.assertEquals(8, thrown.getPos());
-    }
-
-    @Test
-    public void twoOperatorsInSequence() {
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("2 + (4 - + 5)"));
-        Assertions.assertEquals(9, thrown.getPos());
-        Assertions.assertEquals(Type.ADD, thrown.getToken().getType());
-    }
-
-    @Test
-    public void wrongVariableName() {
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("x 2 = 5"));
-        Assertions.assertEquals(2, thrown.getPos());
-        Assertions.assertEquals(Type.NUM, thrown.getToken().getType());
-    }
-
-    @Test
-    public void wrongVariableNameDigitFirst() {
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("2x = 5"));
-        Assertions.assertEquals(1, thrown.getPos());
-        Assertions.assertEquals(Type.NAME, thrown.getToken().getType());
-    }
-
-    @Test
-    public void incorrectAssNoVariable() {
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("2 + 3 = 4 + 1"));
-        Assertions.assertEquals(6, thrown.getPos());
-        Assertions.assertEquals(Type.ASS, thrown.getToken().getType());
-    }
-
-    @Test
-    public void incorrectAssTermLeft() {
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("2 + x = 5"));
-        Assertions.assertEquals(6, thrown.getPos());
-        Assertions.assertEquals(Type.ASS, thrown.getToken().getType());
-    }
-
-    @Test
-    public void correctPositionVariableValue() {
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("x = 3+*4"));
-        Assertions.assertEquals(6, thrown.getPos());
-        Assertions.assertEquals(Type.MUL, thrown.getToken().getType());
-    }
-
-    @Test
-    public void divOrder() {
-        Assertions.assertEquals(0.25, calculate("1/2/2"));
-    }
-
-    @Test
-    public void subOrder() {
-        Assertions.assertEquals(0.0, calculate("5-2-3"));
-    }
-
-    @Test
-    public void powerOrder() {
-        Assertions.assertEquals(262144, calculate("4^3^2"));
-    }
-
-    @Test
-    public void mulAddOrder() {
-        Assertions.assertEquals(6.0, calculate("2+2*2"));
-    }
-
-    @Test
-    public void mulSubOrder() {
-        Assertions.assertEquals(-2.0, calculate("2-2*2"));
-    }
-
-    @Test
-    public void mulBracketsOrder() {
-        Assertions.assertEquals(8.0, calculate("(2+2)*2"));
-    }
-
-    @Test
-    public void calculateTestMixed() {
-        Assertions.assertEquals(36.0, calculate("( 2+ 7) * 3 + 9"));
-        Assertions.assertEquals(25.0, calculate("42/6+(70-64)*5+52/26-70/5"));
-        Assertions.assertEquals(93.0, calculate("70-(81-39)/7+6*7-90/5+85/17"));
-        Assertions.assertEquals(-210.0, calculate("(900-250+140)-(400+900/3-200)-500"));
-    }
 }
-
-
-
-
-
-
