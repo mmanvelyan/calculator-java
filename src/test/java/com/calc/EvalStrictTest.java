@@ -2,6 +2,8 @@ package com.calc;
 
 import com.calc.command.EvalStrictNodeVisitor;
 import com.calc.command.Result;
+import com.calc.command.UnexpectedFunctionException;
+import com.calc.command.UnexpectedVariableException;
 import com.calc.lexer.Type;
 import com.calc.node.Node;
 import com.calc.parser.MathExpressionParser;
@@ -10,11 +12,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class EvalStrictTest {
-    
+
+    private final Variables variables = new Variables();
+    private final Functions functions = new Functions();
+
     private Double calculate(String s){
         MathExpressionParser calc = new MathExpressionParser();
-        Variables variables = new Variables();
-        Functions functions = new Functions();
         Node tree = calc.parse(s);
         EvalStrictNodeVisitor eval = new EvalStrictNodeVisitor();
         Result res = tree.accept(eval, variables, functions);
@@ -178,6 +181,29 @@ public class EvalStrictTest {
     @Test
     public void mulBracketsOrder() {
         Assertions.assertEquals(8.0, calculate("(2+2)*2"));
+    }
+
+    @Test
+    public void functionDefinitionResultExpression(){
+        UnexpectedVariableException thrown = Assertions.assertThrows(UnexpectedVariableException.class, () -> calculate("f(x) = x"));
+        Assertions.assertEquals(7, thrown.getPos());
+        Assertions.assertEquals("x", thrown.getName());
+    }
+
+    @Test
+    public void exceptionFunctionNotSaved(){
+        UnexpectedVariableException thrown = Assertions.assertThrows(UnexpectedVariableException.class, () -> calculate("f(x) = x"));
+        Assertions.assertEquals(7, thrown.getPos());
+        Assertions.assertEquals("x", thrown.getName());
+        UnexpectedFunctionException thrown1 = Assertions.assertThrows(UnexpectedFunctionException.class, () -> calculate("f(5)"));
+        Assertions.assertEquals(0, thrown1.getPos());
+        Assertions.assertEquals("f", thrown1.getName());
+    }
+
+    @Test
+    public void unusedUnknownArgument(){
+        Assertions.assertEquals(5, calculate("f(x) = 5"));
+        Assertions.assertEquals(5, calculate("f(y)"));
     }
 
     @Test

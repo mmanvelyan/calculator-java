@@ -39,7 +39,10 @@ public class EvalNodeVisitor implements NodeVisitor {
                     throw new InvalidOperationException(node, operator);
             }
         } else {
-            return new Result(new BinaryOperatorNode(operator, left.getExpression(), right.getExpression()));
+            Node leftExpression = left.getExpression();
+            Node rightExpression = right.getExpression();
+            Result result = new Result(new BinaryOperatorNode(operator, leftExpression, rightExpression));
+            return result;
         }
     }
 
@@ -55,7 +58,7 @@ public class EvalNodeVisitor implements NodeVisitor {
         } else {
             Function newFun = new Function(argNames, expression);
             functions.createFunction(name, newFun);
-            return new Result(0);
+            return new Result(expression);
         }
     }
 

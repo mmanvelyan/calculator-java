@@ -7,6 +7,7 @@ import com.calc.parser.Query;
 import com.calc.parser.QueryParser;
 import com.calc.lexer.UnexpectedTokenException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +29,11 @@ public class FunctionsTest {
         Query query = queryParser.parse(s);
         NodeVisitor command = query.getCommand();
         Node expression = query.getExpression();
-        return expression.accept(command, variables, functions);
+        Result result = expression.accept(command, variables, functions);
+        if (result.getType() == ResultType.EXP){
+            return result.getExpression().accept(new PrintNodeVisitor(), variables, functions);
+        }
+        return result;
     }
 
     @Test
@@ -41,7 +46,7 @@ public class FunctionsTest {
 
     @Test
     public void unexpectedFunctionArguments(){
-        assertEquals(0, execute("f(x) = x"));
+        assertEquals("x", execute("f(x) = x"));
         UnexpectedFunctionException thrown = assertThrows(UnexpectedFunctionException.class, () -> execute("eval strict # f(1, 2)"));
         Assertions.assertEquals(14, thrown.getPos());
         Assertions.assertEquals("f", thrown.getName());
@@ -56,8 +61,8 @@ public class FunctionsTest {
     @Test
     public void functionCycle(){
         
-        assertEquals(0, execute("g(x) = 1"));
-        assertEquals(0, execute("f(x) = g(x)"));
+        assertEquals("1", execute("g(x) = 1"));
+        assertEquals("g(x)", execute("f(x) = g(x)"));
         FunctionCycleException thrown = assertThrows(FunctionCycleException.class, () -> execute("g(x) = f(x)"));
         Assertions.assertEquals(7, thrown.getPos());
         Assertions.assertEquals("g", thrown.getName());
@@ -83,14 +88,14 @@ public class FunctionsTest {
     @Test
     public void functionTest(){
         
-        assertEquals(0, execute("f(x) = x*x"));
+        assertEquals("x*x", execute("f(x) = x*x"));
         assertEquals(25, execute("f(5)"));
     }
 
     @Test
     public void variableArgument(){
         
-        assertEquals(0, execute("f(x) = x*x"));
+        assertEquals("x*x", execute("f(x) = x*x"));
         assertEquals(5, execute("y = 5"));
         assertEquals(25, execute("f(y)"));
     }
@@ -98,7 +103,7 @@ public class FunctionsTest {
     @Test
     public void expressionArgument(){
         
-        assertEquals(0, execute("f(x) = x*x"));
+        assertEquals("x*x", execute("f(x) = x*x"));
         assertEquals(5, execute("y = 5"));
         assertEquals(100, execute("f(2*y)"));
     }
@@ -106,20 +111,27 @@ public class FunctionsTest {
     @Test
     public void functionArgument(){
         
-        assertEquals(0, execute("f(x) = x*x"));
+        assertEquals("x*x", execute("f(x) = x*x"));
         assertEquals(16, execute("f(f(2))"));
     }
 
     @Test
     public void multipleArguments(){
         
-        assertEquals(0, execute("f(x, y) = x*x + y"));
+        assertEquals("x*x+y", execute("f(x, y) = x*x + y"));
         assertEquals(9, execute("f(2, 5)"));
     }
 
     @Test
     public void rpnFunction(){
-        assertEquals(0, execute("f(x) = 2*x"));
+        assertEquals("2*x", execute("f(x) = 2*x"));
         assertEquals("f(x y + , x y *) g(x) - ", execute("rpn # f(x+y, x*y)-g(x)"));
+    }
+
+    @Disabled
+    @Test
+    public void multipleDefinitionTests(){
+        //assertEquals( ... , execute("x = f(x) = x"));
+        //assertEquals( ... , execute("g(x) = g(x) = x"));
     }
 }

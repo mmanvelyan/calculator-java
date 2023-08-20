@@ -60,7 +60,7 @@ public class EvalTest {
     public void evalStrictFunction() {
         Variables variables = new Variables();
         Functions functions = new Functions();
-        Assertions.assertEquals("0.0", calculate("f(x) = x^2", variables, functions));
+        Assertions.assertEquals("x^2", calculate("f(x) = x^2", variables, functions));
         Assertions.assertEquals("4.0", calculate("f(2)", variables, functions));
     }
 
@@ -68,7 +68,7 @@ public class EvalTest {
     public void evalUnknownArgument(){
         Variables variables = new Variables();
         Functions functions = new Functions();
-        Assertions.assertEquals("0.0", calculate("f(x) = x^2", variables, functions));
+        Assertions.assertEquals("x^2", calculate("f(x) = x^2", variables, functions));
         Assertions.assertEquals("y^2", calculate("f(y)", variables, functions));
     }
 

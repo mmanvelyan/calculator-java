@@ -43,8 +43,9 @@ public class EvalStrictNodeVisitor implements NodeVisitor {
             return result;
         } else {
             Function newFun = new Function(argNames, expression);
+            Result result = expression.accept(this, variables, functions);
             functions.createFunction(name, newFun);
-            return new Result(0);
+            return result;
         }
     }
 
@@ -112,9 +113,16 @@ public class EvalStrictNodeVisitor implements NodeVisitor {
         }
         for (int i = 0; i < arguments.size(); i++){
             Node arg = arguments.get(i);
-            functionVariables.createVariable(functionArgs.get(i), arg.accept(this, variables, functions).getVal());
+            Result argEval = arg.accept(new EvalNodeVisitor(), variables, functions);
+            String argName = functionArgs.get(i);
+            if (argEval.getType() == ResultType.VAL){
+                functionVariables.createVariable(argName, argEval.getVal());
+            } else {
+                functionVariables.createVariable(argName, argEval.getExpression());
+            }
         }
-        return function.getExpression().accept(this, functionVariables, functions);
+        Node functionExpression = function.getExpression();
+        return functionExpression.accept(this, functionVariables, functions);
     }
 
     @Override
