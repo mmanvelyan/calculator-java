@@ -61,18 +61,19 @@ public class MathExpressionParser {
 
     private Node parseNumber(PushBackLexer lex){
         Token nxt = lex.nextToken();
-        if (nxt.getType() == SUB){
+        Type type = nxt.getType();
+        if (type == SUB){
             return new BinaryOperatorNode(SUB, new NumberNode(0), parseNumber(lex));
-        } else if (nxt.getType() == OPEN_BR){
+        } else if (type == OPEN_BR){
             Node expression = parseTerm(lex);
             nxt = lex.nextToken();
             if (nxt.getType() != CLOSING_BR){
                 throw new UnexpectedTokenException(nxt, ")");
             }
             return expression;
-        } else if (nxt.getType() == NUM) {
+        } else if (type == NUM) {
             return new NumberNode(nxt.getVal());
-        } else if (nxt.getType() == NAME) {
+        } else if (type == NAME) {
             Token nxtFun = lex.nextToken();
             if (nxtFun.getType() == OPEN_BR){
                 ArrayList<Node> args = parseArgs(lex);

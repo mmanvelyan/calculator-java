@@ -11,8 +11,10 @@ public class PrintNodeVisitor implements NodeVisitor {
 
     @Override
     public Result accept(BinaryOperatorNode node, Variables variables, Functions functions) {
-        String leftNode = node.getL().accept(this, variables, functions).getStr();
-        String rightNode = node.getR().accept(this, variables, functions).getStr();
+        Node l = node.getL();
+        String leftNode = l.accept(this, variables, functions).getStr();
+        Node r = node.getR();
+        String rightNode = r.accept(this, variables, functions).getStr();
         Type operator = node.getOperator();
         return new Result(leftNode+operator.toString()+rightNode);
     }

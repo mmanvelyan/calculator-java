@@ -15,7 +15,6 @@ public class Functions {
 
     public Functions() {
         functions = new HashMap<>();
-        //addCommonFunctions();
     }
 
     public Functions(Map<String, Function> functions) {
@@ -37,7 +36,8 @@ public class Functions {
         try {
             function.getExpression().accept(new EvalStrictNodeVisitor(), functionVariables, new Functions(newFunctions));
         } catch (UnexpectedFunctionException ex){
-            if (functions.get(ex.getName()) == null){
+            String functionName = ex.getName();
+            if (functions.get(functionName) == null){
                 throw ex;
             } else {
                 throw new FunctionCycleException(ex);

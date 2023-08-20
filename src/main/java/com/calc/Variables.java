@@ -1,7 +1,5 @@
 package com.calc;
 
-import com.calc.command.EvalNodeVisitor;
-import com.calc.command.EvalStrictNodeVisitor;
 import com.calc.node.Node;
 import com.calc.node.NumberNode;
 

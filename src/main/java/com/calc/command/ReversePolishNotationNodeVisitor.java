@@ -11,8 +11,10 @@ public class ReversePolishNotationNodeVisitor implements NodeVisitor {
 
     @Override
     public Result accept(BinaryOperatorNode node, Variables variables, Functions functions) {
-        String leftRPN = node.getL().accept(this, variables, functions).getStr();
-        String rightRPN = node.getR().accept(this, variables, functions).getStr();
+        Node l = node.getL();
+        String leftRPN = l.accept(this, variables, functions).getStr();
+        Node r = node.getR();
+        String rightRPN = r.accept(this, variables, functions).getStr();
         Type operator = node.getOperator();
         return new Result(leftRPN+rightRPN+operator.toString()+" ");
     }
