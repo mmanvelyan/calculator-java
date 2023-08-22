@@ -9,12 +9,13 @@
 +8.1 PushBackLexerTest
 +9. UnexpectedVariableException
 +10. -Lexer.getPos(). UnexpectedTokenException got, exp - Tokens
-11. обратная польская запись (Visitor)
++11. обратная польская запись (Visitor)
 12. Pattern Command
 13. Abstract factory
 +14. Function tests
-15. Expression Result
-*16. Derivation
++15. Expression Result
+
+16. Derivation
 17. Visitor
 18. Java 17 (sealed classes) (switch expression) (record)
 +19. Packages

@@ -5,9 +5,44 @@ import com.calc.Variables;
 import com.calc.lexer.Type;
 import com.calc.node.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static java.lang.Math.min;
 
 public class PrintNodeVisitor implements NodeVisitor {
+
+    private final Map<Character, Integer> priorities = new HashMap<>();
+
+    public PrintNodeVisitor(){
+        priorities.put('-', 0);
+        priorities.put('+', 0);
+        priorities.put('*', 1);
+        priorities.put('/', 1);
+        priorities.put('^', 2);
+    }
+
+    private int getMinPriority(String s){
+        int minPriority = Integer.MAX_VALUE;
+        int br = 0;
+        for (int i = 0; i < s.length(); i++){
+            char curChar = s.charAt(i);
+            if (br == 0){
+                Integer curPriority = priorities.get(curChar);
+                if (curPriority != null){
+                    minPriority = min(curPriority, minPriority);
+                } else if (curChar == '('){
+                    br++;
+                }
+            } else if (curChar == '('){
+                br++;
+            } else if (curChar == ')'){
+                br--;
+            }
+        }
+        return minPriority;
+    }
 
     @Override
     public Result accept(BinaryOperatorNode node, Variables variables, Functions functions) {
@@ -16,7 +51,15 @@ public class PrintNodeVisitor implements NodeVisitor {
         Node r = node.getR();
         String rightNode = r.accept(this, variables, functions).getStr();
         Type operator = node.getOperator();
-        return new Result(leftNode+operator.toString()+rightNode);
+        char operatorChar = operator.toString().charAt(0);
+        Integer operatorPriority = priorities.get(operatorChar);
+        if (operatorPriority > getMinPriority(leftNode)){
+            leftNode = '(' + leftNode + ')';
+        }
+        if (operatorPriority >= getMinPriority(rightNode)){
+            rightNode = '(' + rightNode + ')';
+        }
+        return new Result(leftNode+operatorChar+rightNode);
     }
 
     @Override

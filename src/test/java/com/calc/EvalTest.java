@@ -72,7 +72,6 @@ public class EvalTest {
         Assertions.assertEquals("y^2", calculate("f(y)", variables, functions));
     }
 
-    @Disabled
     @Test
     public void printCorrectBrackets(){
         Variables variables = new Variables();
