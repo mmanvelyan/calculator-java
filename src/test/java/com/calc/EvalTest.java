@@ -1,14 +1,14 @@
 package com.calc;
 
-import com.calc.command.EvalNodeVisitor;
-import com.calc.command.PrintNodeVisitor;
-import com.calc.command.Result;
-import com.calc.command.ResultType;
+import com.calc.command.*;
+import com.calc.lexer.UnexpectedTokenException;
 import com.calc.node.Node;
 import com.calc.parser.MathExpressionParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import static com.calc.lexer.Type.ASS;
 
 public class EvalTest {
 
@@ -73,10 +73,36 @@ public class EvalTest {
     }
 
     @Test
+    public void variableDefinitionUnexpected(){
+        Variables variables = new Variables();
+        Functions functions = new Functions();
+        UnexpectedVariableException thrown = Assertions.assertThrows(UnexpectedVariableException.class, () -> calculate("x = y", variables, functions));
+        Assertions.assertEquals(4,thrown.getPos());
+        Assertions.assertEquals("y", thrown.getName());
+    }
+
+    @Test
+    public void functionDefinitionUnexpected(){
+        Variables variables = new Variables();
+        Functions functions = new Functions();
+        UnexpectedFunctionException thrown = Assertions.assertThrows(UnexpectedFunctionException.class, () -> calculate("f(x) = g(x)", variables, functions));
+        Assertions.assertEquals(7, thrown.getPos());
+        Assertions.assertEquals("g", thrown.getName());
+    }
+
+    @Test
     public void printCorrectBrackets(){
         Variables variables = new Variables();
         Functions functions = new Functions();
         Assertions.assertEquals("(x+y)*z", calculate("(x+y)*z", variables, functions));
     }
 
+    @Test
+    public void multipleDefinitionTests(){
+        Variables variables = new Variables();
+        Functions functions = new Functions();
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("x = f(x) = x", variables, functions));
+        Assertions.assertEquals(9, thrown.getPos());
+        Assertions.assertEquals(ASS, thrown.getToken().getType());
+    }
 }

@@ -128,10 +128,4 @@ public class FunctionsTest {
         assertEquals("f(x y + , x y *) g(x) - ", execute("rpn # f(x+y, x*y)-g(x)"));
     }
 
-    @Disabled
-    @Test
-    public void multipleDefinitionTests(){
-        //assertEquals( ... , execute("x = f(x) = x"));
-        //assertEquals( ... , execute("g(x) = g(x) = x"));
-    }
 }

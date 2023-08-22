@@ -52,7 +52,7 @@ public class EvalNodeVisitor implements NodeVisitor {
         String name = node.getName();
         Node expression = node.getExpression();
         if (argNames.size() == 0){
-            Result result = expression.accept(this, variables, functions);
+            Result result = expression.accept(new EvalStrictNodeVisitor(), variables, functions);
             variables.createVariable(name, result.getVal());
             return result;
         } else {

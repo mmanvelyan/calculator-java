@@ -12,7 +12,7 @@ import static com.calc.lexer.Type.*;
 <query> -> <expression>
 
 <statement> -> <term>
-<statement> -> <definition> = <statement>
+<statement> -> <definition> = <term>
 <term> -> <factor> + <term>
 <term> -> <factor> - <term>
 <term> -> <factor>
@@ -189,16 +189,16 @@ public class MathExpressionParser {
             nxt = lex.nextToken();
             tokenCount++;
             if (nxt.getType() == ASS){
-                Node statement = parseStatement(lex);
-                return new DefineNode(name, argNames, statement);
+                Node term = parseTerm(lex);
+                return new DefineNode(name, argNames, term);
             } else {
                 lex.returnToPrevPos(tokenCount);
                 return parseTerm(lex);
             }
         } else {
             if (nxt.getType() == ASS){
-                Node statement = parseStatement(lex);
-                return new DefineNode(name, statement);
+                Node term = parseTerm(lex);
+                return new DefineNode(name, term);
             } else {
                 lex.returnToPrevPos(tokenCount);
                 return parseTerm(lex);
