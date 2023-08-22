@@ -26,4 +26,8 @@ public class VariableNode implements Node {
         return visitor.accept(this, variables, functions);
     }
 
+    public String toString(){
+        return "[pos " + pos + ", variable " + name + "]";
+    }
+
 }

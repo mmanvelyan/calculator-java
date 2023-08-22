@@ -3,7 +3,9 @@ package com.calc;
 import com.calc.command.EvalStrictNodeVisitor;
 import com.calc.command.FunctionCycleException;
 import com.calc.command.UnexpectedFunctionException;
+import javafx.util.Pair;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +46,15 @@ public class Functions {
             }
         }
         functions.put(name, function);
+    }
+
+    public String toString(){
+        String res = "functions {";
+        List<String> functionsStrings = new ArrayList<>();
+        for ( Map.Entry<String, Function> f : functions.entrySet()){
+            functionsStrings.add(f.getKey() + " : " + f.getValue().toString());
+        }
+        return res + String.join(", ", functionsStrings) + "}";
     }
 
 }

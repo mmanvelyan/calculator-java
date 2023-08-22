@@ -21,4 +21,8 @@ public class Query {
         return expression;
     }
 
+    public String toString(){
+        return "command [" + command.getClass().getName() + "], expression " + expression.toString();
+    }
+
 }

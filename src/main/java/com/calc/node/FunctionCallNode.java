@@ -4,6 +4,7 @@ import com.calc.*;
 import com.calc.command.NodeVisitor;
 import com.calc.command.Result;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +33,15 @@ public class FunctionCallNode implements Node {
 
     public Result accept(NodeVisitor visitor, Variables variables, Functions functions){
         return visitor.accept(this, variables, functions);
+    }
+
+    public String toString(){
+        String res = "[pos = " + pos + ", call " + name + "(";
+        List<String> argStrings = new ArrayList<>();
+        for (Node arg : arguments){
+            argStrings.add(arg.toString());
+        }
+        return res + String.join(", ", argStrings) + ")]";
     }
 
 }

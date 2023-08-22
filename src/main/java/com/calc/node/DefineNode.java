@@ -42,4 +42,12 @@ public class DefineNode implements Node {
         return visitor.accept(this, variables, functions);
     }
 
+    public String toString(){
+        if (argNames.size() == 0){
+            return "["+name + " = " + expression.toString() + "]";
+        } else {
+            return "[" + name + "(" + String.join(", ", argNames) + ") = " + expression.toString() + "]";
+        }
+    }
+
 }

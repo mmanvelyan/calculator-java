@@ -32,4 +32,8 @@ public class BinaryOperatorNode implements Node {
         return visitor.accept(this, variables, functions);
     }
 
+    public String toString(){
+        return "[operator = " + operator.toString() + ", l = " + l.toString() + ", r = " + r.toString() + "]";
+    }
+
 }

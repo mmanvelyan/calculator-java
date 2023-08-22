@@ -1,7 +1,12 @@
 package com.calc.command;
 
+import com.calc.Functions;
+import com.calc.Variables;
 import com.calc.node.Node;
 import com.calc.node.NumberNode;
+
+import static com.calc.command.ResultType.STR;
+import static com.calc.command.ResultType.VAL;
 
 public class Result {
     private final double val;
@@ -17,7 +22,7 @@ public class Result {
     }
 
     public Result(double f){
-        this(ResultType.VAL, f, null, new NumberNode(f));
+        this(VAL, f, null, new NumberNode(f));
     }
 
     public Result(String s){
@@ -42,5 +47,18 @@ public class Result {
 
     public Node getExpression() {
         return expression;
+    }
+
+    public String toString(){
+        String res = type.toString() + " [";
+        if (type == VAL){
+            res += val;
+        } else if (type == STR){
+            res += str;
+        } else {
+            res += expression.accept(new PrintNodeVisitor(), new Variables(), new Functions());
+        }
+        res += "]";
+        return res;
     }
 }

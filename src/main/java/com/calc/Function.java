@@ -1,5 +1,6 @@
 package com.calc;
 
+import com.calc.command.PrintNodeVisitor;
 import com.calc.node.Node;
 
 import java.util.Collections;
@@ -22,6 +23,10 @@ public class Function {
 
     public Node getExpression() {
         return expression;
+    }
+
+    public String toString(){
+        return "function(" + String.join(", ", args) + ") = " + expression.accept(new PrintNodeVisitor(), new Variables(), new Functions());
     }
 
 }

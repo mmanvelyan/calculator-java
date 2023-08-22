@@ -16,10 +16,10 @@
 +15. Expression Result
 
 16. Derivation
-17. Visitor
++17. Visitor
 18. Java 17 (sealed classes) (switch expression) (record)
 +19. Packages
 20. Lexer Bookmarks
-21. toString + Debug
-22. 1 statement - 1 method call!!!
++21. toString + Debug
++22. 1 statement - 1 method call!!!
 23. Context

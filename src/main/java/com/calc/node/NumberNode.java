@@ -20,4 +20,7 @@ public class NumberNode implements Node {
         return v.accept(this, variables, functions);
     }
 
+    public String toString(){
+        return "[" + value + "]";
+    }
 }
