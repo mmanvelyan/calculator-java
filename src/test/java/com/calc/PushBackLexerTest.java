@@ -1,9 +1,10 @@
 package com.calc;
 
 import com.calc.lexer.*;
-import com.calc.lexer.UnexpectedTokenException;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PushBackLexerTest {
     private PushBackLexer lex;

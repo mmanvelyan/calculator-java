@@ -1,7 +1,6 @@
 package com.calc.command;
 
-import com.calc.Functions;
-import com.calc.Variables;
+import com.calc.Context;
 import com.calc.node.Node;
 import com.calc.node.NumberNode;
 
@@ -56,7 +55,7 @@ public class Result {
         } else if (type == STR){
             res += str;
         } else {
-            res += expression.accept(new PrintNodeVisitor(), new Variables(), new Functions());
+            res += expression.accept(new PrintNodeVisitor(), new Context());
         }
         res += "]";
         return res;

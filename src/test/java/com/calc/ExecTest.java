@@ -3,21 +3,20 @@ package com.calc;
 import com.calc.command.NodeVisitor;
 import com.calc.command.Result;
 import com.calc.lexer.Type;
+import com.calc.lexer.UnexpectedTokenException;
 import com.calc.node.Node;
 import com.calc.parser.Query;
 import com.calc.parser.QueryParser;
 import com.calc.parser.UnexpectedCommandException;
-import com.calc.lexer.UnexpectedTokenException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExecTest {
 
     private final QueryParser queryParser = new QueryParser();
-    private final Variables variables = new Variables();
-
-    private final Functions functions = new Functions();
+    private final Context context = new Context();
 
     private void assertEquals(Result a, Result b){
         Assertions.assertEquals(a.getType(), b.getType());
@@ -29,7 +28,7 @@ public class ExecTest {
         Query query = queryParser.parse(s);
         NodeVisitor command = query.getCommand();
         Node expression = query.getExpression();
-        return expression.accept(command, variables, functions);
+        return expression.accept(command, context);
     }
 
     @Test

@@ -27,7 +27,7 @@ public class Output {
             System.out.println(er.getStr());
         } else {
             NodeVisitor print = new PrintNodeVisitor();
-            System.out.println(er.getExpression().accept(print, new Variables(), new Functions()).getStr());
+            System.out.println(er.getExpression().accept(print, new Context()).getStr());
         }
     }
 }

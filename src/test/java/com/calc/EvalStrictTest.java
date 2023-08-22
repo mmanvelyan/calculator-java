@@ -5,22 +5,21 @@ import com.calc.command.Result;
 import com.calc.command.UnexpectedFunctionException;
 import com.calc.command.UnexpectedVariableException;
 import com.calc.lexer.Type;
+import com.calc.lexer.UnexpectedTokenException;
 import com.calc.node.Node;
 import com.calc.parser.MathExpressionParser;
-import com.calc.lexer.UnexpectedTokenException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class EvalStrictTest {
 
-    private final Variables variables = new Variables();
-    private final Functions functions = new Functions();
+    private final Context context = new Context();
 
     private Double calculate(String s){
         MathExpressionParser calc = new MathExpressionParser();
         Node tree = calc.parse(s);
         EvalStrictNodeVisitor eval = new EvalStrictNodeVisitor();
-        Result res = tree.accept(eval, variables, functions);
+        Result res = tree.accept(eval, context);
         return res.getVal();
     }
     

@@ -1,7 +1,7 @@
 package com.calc.command;
 
+import com.calc.Context;
 import com.calc.Function;
-import com.calc.Functions;
 import com.calc.Variables;
 import com.calc.lexer.Type;
 import com.calc.node.*;
@@ -12,11 +12,11 @@ import java.util.List;
 public class EvalNodeVisitor implements NodeVisitor {
 
     @Override
-    public Result accept(BinaryOperatorNode node, Variables variables, Functions functions) {
+    public Result accept(BinaryOperatorNode node, Context context) {
         Node l = node.getL();
-        Result left = l.accept(this, variables, functions);
+        Result left = l.accept(this, context);
         Node r = node.getR();
-        Result right = r.accept(this, variables, functions);
+        Result right = r.accept(this, context);
         Type operator = node.getOperator();
         if (left.getType() == ResultType.VAL && right.getType() == ResultType.VAL) {
             double leftValue = left.getVal();
@@ -47,36 +47,36 @@ public class EvalNodeVisitor implements NodeVisitor {
     }
 
     @Override
-    public Result accept(DefineNode node, Variables variables, Functions functions) {
+    public Result accept(DefineNode node, Context context) {
         List<String> argNames = node.getArgNames();
         String name = node.getName();
         Node expression = node.getExpression();
         if (argNames.size() == 0){
-            Result result = expression.accept(new EvalStrictNodeVisitor(), variables, functions);
-            variables.createVariable(name, result.getVal());
+            Result result = expression.accept(new EvalStrictNodeVisitor(), context);
+            context.createVariable(name, result.getVal());
             return result;
         } else {
             Function newFun = new Function(argNames, expression);
-            functions.createFunction(name, newFun);
+            context.createFunction(name, newFun);
             return new Result(expression);
         }
     }
 
-    private List<Node> evalArguments(FunctionCallNode node, Variables variables, Functions functions) {
+    private List<Node> evalArguments(FunctionCallNode node, Context context) {
         List<Node> arguments = new ArrayList<>();
         for (Node arg : node.getArguments()) {
-            Result result = arg.accept(this, variables, functions);
+            Result result = arg.accept(this, context);
             arguments.add(result.getExpression());
         }
         return arguments;
     }
 
-    private Result commonFunctions(FunctionCallNode node, Variables variables, Functions functions){
-        List<Node> arguments = evalArguments(node, variables, functions);
+    private Result commonFunctions(FunctionCallNode node, Context context){
+        List<Node> arguments = evalArguments(node, context);
         String name = node.getName();
         if (arguments.size() == 1){
             Node arg = arguments.get(0);
-            double value = arg.accept(this, variables, functions).getVal();
+            double value = arg.accept(this, context).getVal();
             switch (name) {
                 case "sqrt":
                     return new Result(Math.sqrt(value));
@@ -106,8 +106,8 @@ public class EvalNodeVisitor implements NodeVisitor {
         } else if (arguments.size() == 2){
             Node argX = arguments.get(0);
             Node argY = arguments.get(1);
-            double xValue = argX.accept(this, variables, functions).getVal();
-            double yValue = argY.accept(this, variables, functions).getVal();
+            double xValue = argX.accept(this, context).getVal();
+            double yValue = argY.accept(this, context).getVal();
             switch (name) {
                 case "log":
                     return new Result(Math.log(yValue) / Math.log(xValue));
@@ -122,12 +122,12 @@ public class EvalNodeVisitor implements NodeVisitor {
     }
 
     @Override
-    public Result accept(FunctionCallNode node, Variables variables, Functions functions) {
-        List<Node> arguments = evalArguments(node, variables, functions);
+    public Result accept(FunctionCallNode node, Context context) {
+        List<Node> arguments = evalArguments(node, context);
         String name = node.getName();
-        Function function = functions.getFunction(name);
+        Function function = context.getFunction(name);
         if (function == null){
-            return commonFunctions(node, variables, functions);
+            return commonFunctions(node, context);
         }
         List<String> functionArgs = function.getArgs();
         Variables functionVariables = new Variables();
@@ -136,7 +136,7 @@ public class EvalNodeVisitor implements NodeVisitor {
         }
         for (int i = 0; i < arguments.size(); i++){
             Node arg = arguments.get(i);
-            Result argEval = arg.accept(this, variables, functions);
+            Result argEval = arg.accept(this, context);
             String argName = functionArgs.get(i);
             if (argEval.getType() == ResultType.EXP){
                 functionVariables.createVariable(argName, argEval.getExpression());
@@ -144,28 +144,30 @@ public class EvalNodeVisitor implements NodeVisitor {
                 functionVariables.createVariable(argName, argEval.getVal());
             }
         }
-        Result expandedResult = function.getExpression().accept(this, functionVariables, functions);
+        Context functionContext = new Context(functionVariables, context.getFunctions());
+        Node functionExpression = function.getExpression();
+        Result expandedResult = functionExpression.accept(this, functionContext);
         if (expandedResult.getType() == ResultType.EXP){
             Node expandedExpression = expandedResult.getExpression();
-            expandedResult = expandedExpression.accept(this, variables, functions);
+            expandedResult = expandedExpression.accept(this, context);
         }
         return expandedResult;
     }
 
     @Override
-    public Result accept(NumberNode node, Variables variables, Functions functions) {
+    public Result accept(NumberNode node, Context context) {
         return new Result(node.getValue());
     }
 
     @Override
-    public Result accept(VariableNode node, Variables variables, Functions functions) {
+    public Result accept(VariableNode node, Context context) {
         String name = node.getName();
-        Node variableValue = variables.getValue(name);
+        Node variableValue = context.getValue(name);
         if (variableValue == null) {
             return new Result(node);
         }
         try {
-            return variableValue.accept(new EvalStrictNodeVisitor(), new Variables(), new Functions());
+            return variableValue.accept(new EvalStrictNodeVisitor(), new Context());
         } catch (Exception e) {
             return new Result(variableValue);
         }

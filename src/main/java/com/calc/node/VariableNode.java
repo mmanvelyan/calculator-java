@@ -1,9 +1,8 @@
 package com.calc.node;
 
-import com.calc.Functions;
+import com.calc.Context;
 import com.calc.command.NodeVisitor;
 import com.calc.command.Result;
-import com.calc.Variables;
 
 public class VariableNode implements Node {
     private final String name;
@@ -22,8 +21,8 @@ public class VariableNode implements Node {
         return pos;
     }
 
-    public Result accept(NodeVisitor visitor, Variables variables, Functions functions){
-        return visitor.accept(this, variables, functions);
+    public Result accept(NodeVisitor visitor, Context context){
+        return visitor.accept(this, context);
     }
 
     public String toString(){

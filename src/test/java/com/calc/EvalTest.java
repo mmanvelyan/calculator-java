@@ -5,7 +5,6 @@ import com.calc.lexer.UnexpectedTokenException;
 import com.calc.node.Node;
 import com.calc.parser.MathExpressionParser;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static com.calc.lexer.Type.ASS;
@@ -13,20 +12,19 @@ import static com.calc.lexer.Type.ASS;
 public class EvalTest {
 
     private String calculate(String s){
-        Variables variables = new Variables();
-        Functions functions = new Functions();
-        return calculate(s, variables, functions);
+        Context context = new Context();
+        return calculate(s, context);
     }
 
-    private String calculate(String s, Variables variables, Functions functions){
+    private String calculate(String s, Context context){
         MathExpressionParser calc = new MathExpressionParser();
         Node tree = calc.parse(s);
         EvalNodeVisitor eval = new EvalNodeVisitor();
-        Result resultExpression = tree.accept(eval, variables, functions);
+        Result resultExpression = tree.accept(eval, context);
         if (resultExpression.getType() == ResultType.VAL){
             return String.valueOf(resultExpression.getVal());
         }
-        Result result = resultExpression.getExpression().accept(new PrintNodeVisitor(), variables, functions);
+        Result result = resultExpression.getExpression().accept(new PrintNodeVisitor(), context);
         return result.getStr();
     }
 
@@ -42,66 +40,66 @@ public class EvalTest {
 
     @Test
     public void evalStrictVariable() {
-        Variables variables = new Variables();
-        Functions functions = new Functions();
-        Assertions.assertEquals("3.0", calculate("x = 3", variables, functions));
-        Assertions.assertEquals("5.0", calculate("x+2", variables, functions));
+        Context context = new Context();
+        Assertions.assertEquals("3.0", calculate("x = 3", context));
+        Assertions.assertEquals("5.0", calculate("x+2", context));
     }
 
     @Test
     public void evalFunctionArgument() {
-        Variables variables = new Variables();
-        Functions functions = new Functions();
-        Assertions.assertEquals("3.0", calculate("x = 3", variables, functions));
-        Assertions.assertEquals("f(5)", calculate("f(x+2)", variables, functions));
+        Context context = new Context();
+        Assertions.assertEquals("3.0", calculate("x = 3", context));
+        Assertions.assertEquals("f(5)", calculate("f(x+2)", context));
     }
 
     @Test
     public void evalStrictFunction() {
-        Variables variables = new Variables();
-        Functions functions = new Functions();
-        Assertions.assertEquals("x^2", calculate("f(x) = x^2", variables, functions));
-        Assertions.assertEquals("4.0", calculate("f(2)", variables, functions));
+        Context context = new Context();
+        Assertions.assertEquals("x^2", calculate("f(x) = x^2", context));
+        Assertions.assertEquals("4.0", calculate("f(2)", context));
     }
 
     @Test
     public void evalUnknownArgument(){
-        Variables variables = new Variables();
-        Functions functions = new Functions();
-        Assertions.assertEquals("x^2", calculate("f(x) = x^2", variables, functions));
-        Assertions.assertEquals("y^2", calculate("f(y)", variables, functions));
+        Context context = new Context();
+        Assertions.assertEquals("x^2", calculate("f(x) = x^2", context));
+        Assertions.assertEquals("y^2", calculate("f(y)", context));
     }
 
     @Test
     public void variableDefinitionUnexpected(){
-        Variables variables = new Variables();
-        Functions functions = new Functions();
-        UnexpectedVariableException thrown = Assertions.assertThrows(UnexpectedVariableException.class, () -> calculate("x = y", variables, functions));
-        Assertions.assertEquals(4,thrown.getPos());
+        Context context = new Context();
+        UnexpectedVariableException thrown = Assertions.assertThrows(UnexpectedVariableException.class, () -> calculate("x = y", context));
+        Assertions.assertEquals(4, thrown.getPos());
         Assertions.assertEquals("y", thrown.getName());
     }
 
     @Test
+    public void variableDefinesVariable(){
+        Context context = new Context();
+        Assertions.assertEquals("5.0", calculate("y = 5", context));
+        Assertions.assertEquals("5.0", calculate("x = y", context));
+        Assertions.assertEquals("5.0", calculate("x", context));
+    }
+
+    @Test
     public void functionDefinitionUnexpected(){
-        Variables variables = new Variables();
-        Functions functions = new Functions();
-        UnexpectedFunctionException thrown = Assertions.assertThrows(UnexpectedFunctionException.class, () -> calculate("f(x) = g(x)", variables, functions));
+        Context context = new Context();
+        UnexpectedFunctionException thrown = Assertions.assertThrows(UnexpectedFunctionException.class, () -> calculate("f(x) = g(x)", context));
         Assertions.assertEquals(7, thrown.getPos());
         Assertions.assertEquals("g", thrown.getName());
     }
 
     @Test
     public void printCorrectBrackets(){
-        Variables variables = new Variables();
-        Functions functions = new Functions();
-        Assertions.assertEquals("(x+y)*z", calculate("(x+y)*z", variables, functions));
+        Context context = new Context();
+        Assertions.assertEquals("(x+y)*z", calculate("(x+y)*z", context));
     }
 
     @Test
     public void multipleDefinitionTests(){
-        Variables variables = new Variables();
-        Functions functions = new Functions();
-        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("x = f(x) = x", variables, functions));
+        Context context = new Context();
+        UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("x = f(x) = x", context));
         Assertions.assertEquals(9, thrown.getPos());
         Assertions.assertEquals(ASS, thrown.getToken().getType());
     }

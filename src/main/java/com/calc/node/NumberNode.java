@@ -1,6 +1,6 @@
 package com.calc.node;
 
-import com.calc.*;
+import com.calc.Context;
 import com.calc.command.NodeVisitor;
 import com.calc.command.Result;
 
@@ -16,8 +16,8 @@ public class NumberNode implements Node {
         return value;
     }
 
-    public Result accept(NodeVisitor v, Variables variables, Functions functions){
-        return v.accept(this, variables, functions);
+    public Result accept(NodeVisitor v, Context context){
+        return v.accept(this, context);
     }
 
     public String toString(){

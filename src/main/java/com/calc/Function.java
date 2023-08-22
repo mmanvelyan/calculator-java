@@ -26,7 +26,7 @@ public class Function {
     }
 
     public String toString(){
-        return "function(" + String.join(", ", args) + ") = " + expression.accept(new PrintNodeVisitor(), new Variables(), new Functions());
+        return "function(" + String.join(", ", args) + ") = " + expression.accept(new PrintNodeVisitor(), new Context());
     }
 
 }

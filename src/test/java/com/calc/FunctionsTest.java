@@ -2,19 +2,18 @@ package com.calc;
 
 import com.calc.command.*;
 import com.calc.lexer.Type;
+import com.calc.lexer.UnexpectedTokenException;
 import com.calc.node.Node;
 import com.calc.parser.Query;
 import com.calc.parser.QueryParser;
-import com.calc.lexer.UnexpectedTokenException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FunctionsTest {
 
-    private final Variables variables = new Variables();
-    private final Functions functions = new Functions();
+    private final Context context = new Context();
 
     private void assertEquals(float expected, Result actual){
         Assertions.assertEquals(expected, actual.getVal());
@@ -29,9 +28,9 @@ public class FunctionsTest {
         Query query = queryParser.parse(s);
         NodeVisitor command = query.getCommand();
         Node expression = query.getExpression();
-        Result result = expression.accept(command, variables, functions);
+        Result result = expression.accept(command, context);
         if (result.getType() == ResultType.EXP){
-            return result.getExpression().accept(new PrintNodeVisitor(), variables, functions);
+            return result.getExpression().accept(new PrintNodeVisitor(), context);
         }
         return result;
     }

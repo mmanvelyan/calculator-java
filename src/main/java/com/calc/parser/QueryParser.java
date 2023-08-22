@@ -1,7 +1,7 @@
 package com.calc.parser;
 
-import com.calc.node.Node;
 import com.calc.command.NodeVisitor;
+import com.calc.node.Node;
 
 import java.util.Arrays;
 

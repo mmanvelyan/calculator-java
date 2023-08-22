@@ -3,7 +3,6 @@ package com.calc;
 import com.calc.command.EvalStrictNodeVisitor;
 import com.calc.command.FunctionCycleException;
 import com.calc.command.UnexpectedFunctionException;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,14 +28,15 @@ public class Functions {
 
     public void createFunction(String name, Function function){
         List<String> args = function.getArgs();
-        Variables functionVariables = new Variables();
-        for (String n : args){
-            functionVariables.createVariable(n, 0);
-        }
+        //0984800699
         Map<String, Function> newFunctions = new HashMap<>(functions);
         newFunctions.remove(name);
+        Context functionContext = new Context(new Variables(), new Functions(newFunctions));
+        for (String n : args){
+            functionContext.createVariable(n, 0);
+        }
         try {
-            function.getExpression().accept(new EvalStrictNodeVisitor(), functionVariables, new Functions(newFunctions));
+            function.getExpression().accept(new EvalStrictNodeVisitor(), functionContext);
         } catch (UnexpectedFunctionException ex){
             String functionName = ex.getName();
             if (functions.get(functionName) == null){

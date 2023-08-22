@@ -1,6 +1,6 @@
 package com.calc.node;
 
-import com.calc.*;
+import com.calc.Context;
 import com.calc.command.NodeVisitor;
 import com.calc.command.Result;
 
@@ -31,8 +31,8 @@ public class FunctionCallNode implements Node {
         return pos;
     }
 
-    public Result accept(NodeVisitor visitor, Variables variables, Functions functions){
-        return visitor.accept(this, variables, functions);
+    public Result accept(NodeVisitor visitor, Context context){
+        return visitor.accept(this, context);
     }
 
     public String toString(){
