@@ -5,9 +5,9 @@ import org.apache.log4j.Logger;
 import java.util.LinkedList;
 
 public class PushBackLexer implements Lexer {
-    private final Lexer lex;
-    private final LinkedList<Token> prevTokens;
-    private int rollbackLevel = 0;
+    protected final Lexer lex;
+    protected final LinkedList<Token> prevTokens;
+    protected int rollbackLevel = 0;
     private final int maxRollback;
 
     private final Logger log = Logger.getLogger(PushBackLexer.class);

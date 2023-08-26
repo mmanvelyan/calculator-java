@@ -35,7 +35,7 @@ import static com.calc.lexer.Type.*;
 
 public class MathExpressionParser {
 
-    private ArrayList<Node> parseArgs(PushBackLexer lex) {
+    private ArrayList<Node> parseArgs(BookmarkLexer lex) {
         ArrayList<Node> args = new ArrayList<>();
         Node arg = parseTerm(lex);
         args.add(arg);
@@ -59,7 +59,7 @@ public class MathExpressionParser {
         }
     }
 
-    private Node parseNumber(PushBackLexer lex){
+    private Node parseNumber(BookmarkLexer lex){
         Token nxt = lex.nextToken();
         Type type = nxt.getType();
         if (type == SUB){
@@ -92,7 +92,7 @@ public class MathExpressionParser {
         }
     }
 
-    private Node parsePower(PushBackLexer lex){
+    private Node parsePower(BookmarkLexer lex){
         Node number = parseNumber(lex);
         Token nxt = lex.nextToken();
         Type tokenType = nxt.getType();
@@ -109,7 +109,7 @@ public class MathExpressionParser {
         return number;
     }
 
-    private Node parseFactor(PushBackLexer lex){
+    private Node parseFactor(BookmarkLexer lex){
         Node factor = parsePower(lex);
         Token nxt = lex.nextToken();
         while (nxt.getType() == MUL || nxt.getType() == DIV){
@@ -130,7 +130,7 @@ public class MathExpressionParser {
         return factor;
     }
 
-    private Node parseTerm(PushBackLexer lex){
+    private Node parseTerm(BookmarkLexer lex){
         Node term = parseFactor(lex);
         Token nxt = lex.nextToken();
         while (nxt.getType() == ADD || nxt.getType() == SUB){
@@ -151,11 +151,10 @@ public class MathExpressionParser {
         return term;
     }
 
-    private Node parseStatement(PushBackLexer lex){
+    private Node parseStatement(BookmarkLexer lex){
 
-        int tokenCount = 0;
+        lex.setBookmark();
         Token nxt = lex.nextToken();
-        tokenCount++;
         if (nxt.getType() != NAME){
             lex.returnToPrevPos();
             return parseTerm(lex);
@@ -163,36 +162,31 @@ public class MathExpressionParser {
         String name = nxt.getName();
 
         nxt = lex.nextToken();
-        tokenCount++;
         if (nxt.getType() == OPEN_BR){
             ArrayList<String> argNames = new ArrayList<>();
             nxt = lex.nextToken();
-            tokenCount++;
             while (nxt.getType() == NAME){
                 argNames.add(nxt.getName());
                 nxt = lex.nextToken();
-                tokenCount++;
                 if (nxt.getType() == CLOSING_BR) {
                     break;
                 } else if (nxt.getType() == COMMA){
                     nxt = lex.nextToken();
-                    tokenCount++;
                 } else {
-                    lex.returnToPrevPos(tokenCount);
+                    lex.returnToBookmark();
                     return parseTerm(lex);
                 }
             }
             if (nxt.getType() != CLOSING_BR){
-                lex.returnToPrevPos(tokenCount);
+                lex.returnToBookmark();
                 return parseTerm(lex);
             }
             nxt = lex.nextToken();
-            tokenCount++;
             if (nxt.getType() == ASS){
                 Node term = parseTerm(lex);
                 return new DefineNode(name, argNames, term);
             } else {
-                lex.returnToPrevPos(tokenCount);
+                lex.returnToBookmark();
                 return parseTerm(lex);
             }
         } else {
@@ -200,14 +194,14 @@ public class MathExpressionParser {
                 Node term = parseTerm(lex);
                 return new DefineNode(name, term);
             } else {
-                lex.returnToPrevPos(tokenCount);
+                lex.returnToBookmark();
                 return parseTerm(lex);
             }
         }
     }
 
     public Node parse(String s){
-        PushBackLexer lex = new PushBackLexer(new BaseLexer(s), Integer.MAX_VALUE);
+        BookmarkLexer lex = new BookmarkLexer(new BaseLexer(s));
         Node tree = parseStatement(lex);
         Token nxt = lex.nextToken();
         if (nxt.getType() != END){
