@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.Math.min;
 
 public class PrintNodeVisitor implements NodeVisitor {
 
     private final Map<Character, Integer> priorities = new HashMap<>();
+    private int minPriority;
 
     public PrintNodeVisitor(){
         priorities.put('-', 0);
@@ -22,40 +22,24 @@ public class PrintNodeVisitor implements NodeVisitor {
         priorities.put('^', 2);
     }
 
-    private int getMinPriority(String s){
-        int minPriority = Integer.MAX_VALUE;
-        int br = 0;
-        for (int i = 0; i < s.length(); i++){
-            char curChar = s.charAt(i);
-            if (br == 0){
-                Integer curPriority = priorities.get(curChar);
-                if (curPriority != null){
-                    minPriority = min(curPriority, minPriority);
-                } else if (curChar == '('){
-                    br++;
-                }
-            } else if (curChar == '('){
-                br++;
-            } else if (curChar == ')'){
-                br--;
-            }
-        }
-        return minPriority;
-    }
-
     @Override
     public Result accept(BinaryOperatorNode node, Context context) {
+        minPriority = Integer.MAX_VALUE;
         Node l = node.getL();
         String leftNode = l.accept(this, context).getStr();
+        int leftPriority = minPriority;
+        minPriority = Integer.MAX_VALUE;
         Node r = node.getR();
         String rightNode = r.accept(this, context).getStr();
+        int rightPriority = minPriority;
         Type operator = node.getOperator();
         char operatorChar = operator.toString().charAt(0);
         Integer operatorPriority = priorities.get(operatorChar);
-        if (operatorPriority > getMinPriority(leftNode)){
+        minPriority = operatorPriority;
+        if (operatorPriority > leftPriority){
             leftNode = '(' + leftNode + ')';
         }
-        if (operatorPriority >= getMinPriority(rightNode)){
+        if (operatorPriority >= rightPriority){
             rightNode = '(' + rightNode + ')';
         }
         return new Result(leftNode+operatorChar+rightNode);
@@ -63,6 +47,7 @@ public class PrintNodeVisitor implements NodeVisitor {
 
     @Override
     public Result accept(DefineNode node, Context context) {
+        minPriority = Integer.MAX_VALUE;
         String res = node.getName();
         List<String> argNames = node.getArgNames();
         if (argNames.size() > 0){
@@ -73,6 +58,7 @@ public class PrintNodeVisitor implements NodeVisitor {
 
     @Override
     public Result accept(FunctionCallNode node, Context context) {
+        minPriority = Integer.MAX_VALUE;
         String res = node.getName() + "(";
         List<Node> arguments = node.getArguments();
         for (Node arg : arguments){
@@ -84,6 +70,7 @@ public class PrintNodeVisitor implements NodeVisitor {
 
     @Override
     public Result accept(NumberNode node, Context context) {
+        minPriority = Integer.MAX_VALUE;
         double value = node.getValue();
         if (value == (int)value){
             return new Result(String.valueOf((int)value));
@@ -93,6 +80,7 @@ public class PrintNodeVisitor implements NodeVisitor {
 
     @Override
     public Result accept(VariableNode node, Context context) {
+        minPriority = Integer.MAX_VALUE;
         String name = node.getName();
         return new Result(name);
     }

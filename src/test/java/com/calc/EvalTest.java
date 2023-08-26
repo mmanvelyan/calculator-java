@@ -97,10 +97,16 @@ public class EvalTest {
     }
 
     @Test
-    public void multipleDefinitionTests(){
+    public void multipleDefinitions(){
         Context context = new Context();
         UnexpectedTokenException thrown = Assertions.assertThrows(UnexpectedTokenException.class, () -> calculate("x = f(x) = x", context));
         Assertions.assertEquals(9, thrown.getPos());
         Assertions.assertEquals(ASS, thrown.getToken().getType());
+    }
+
+    @Test
+    public void unaryMinus(){
+        Context context = new Context();
+        Assertions.assertEquals("x+(-y)", calculate("x+(-y)", context));
     }
 }
