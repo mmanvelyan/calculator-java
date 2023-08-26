@@ -19,6 +19,14 @@ public class ReversePolishNotationNodeVisitor implements NodeVisitor {
     }
 
     @Override
+    public Result accept(UnaryOperatorNode node, Context context) {
+        Node operand = node.getOperand();
+        String operandRPN = operand.accept(this, context).getStr();
+        Type operator = node.getOperator();
+        return new Result(operandRPN+operator.toString()+" ");
+    }
+
+    @Override
     public Result accept(DefineNode node, Context context) {
         String res = node.getName();
         List<String> argNames = node.getArgNames();

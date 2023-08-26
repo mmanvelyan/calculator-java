@@ -63,7 +63,7 @@ public class MathExpressionParser {
         Token nxt = lex.nextToken();
         Type type = nxt.getType();
         if (type == SUB){
-            return new BinaryOperatorNode(SUB, new NumberNode(0), parseNumber(lex));
+            return new UnaryOperatorNode(SUB, parseNumber(lex));
         } else if (type == OPEN_BR){
             Node expression = parseTerm(lex);
             nxt = lex.nextToken();

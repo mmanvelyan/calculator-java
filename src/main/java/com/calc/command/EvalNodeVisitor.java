@@ -47,6 +47,26 @@ public class EvalNodeVisitor implements NodeVisitor {
     }
 
     @Override
+    public Result accept(UnaryOperatorNode node, Context context) {
+        Node operand = node.getOperand();
+        Result res = operand.accept(this, context);
+        Type operator = node.getOperator();
+        if (res.getType() == ResultType.VAL) {
+            double value = res.getVal();
+            switch (operator) {
+                case SUB:
+                    return new Result(-value);
+                default:
+                    throw new InvalidOperationException(node, operator);
+            }
+        } else {
+            Node expression = res.getExpression();
+            Result result = new Result(new UnaryOperatorNode(operator, expression));
+            return result;
+        }
+    }
+
+    @Override
     public Result accept(DefineNode node, Context context) {
         List<String> argNames = node.getArgNames();
         String name = node.getName();

@@ -46,6 +46,22 @@ public class PrintNodeVisitor implements NodeVisitor {
     }
 
     @Override
+    public Result accept(UnaryOperatorNode node, Context context) {
+        minPriority = Integer.MAX_VALUE;
+        Node operand = node.getOperand();
+        String operandString = operand.accept(this, context).getStr();
+        int priority = minPriority;
+        Type operator = node.getOperator();
+        char operatorChar = operator.toString().charAt(0);
+        Integer operatorPriority = priorities.get(operatorChar);
+        minPriority = operatorPriority;
+        if (operatorPriority > priority){
+            operandString = '(' + operandString + ')';
+        }
+        return new Result(operatorChar+operandString);
+    }
+
+    @Override
     public Result accept(DefineNode node, Context context) {
         minPriority = Integer.MAX_VALUE;
         String res = node.getName();

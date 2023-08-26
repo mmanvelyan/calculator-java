@@ -35,6 +35,19 @@ public class EvalStrictNodeVisitor implements NodeVisitor {
     }
 
     @Override
+    public Result accept(UnaryOperatorNode node, Context context) {
+        Node operand = node.getOperand();
+        double value = operand.accept(this, context).getVal();
+        Type operator = node.getOperator();
+        switch (operator) {
+            case SUB:
+                return new Result(-value);
+            default:
+                throw new InvalidOperationException(node, operator);
+        }
+    }
+
+    @Override
     public Result accept(DefineNode node, Context context) {
         List<String> argNames = node.getArgNames();
         String name = node.getName();
