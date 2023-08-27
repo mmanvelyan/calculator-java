@@ -96,7 +96,11 @@ public class EvalNodeVisitor implements NodeVisitor {
         String name = node.getName();
         if (arguments.size() == 1){
             Node arg = arguments.get(0);
-            double value = arg.accept(this, context).getVal();
+            Result argRes = arg.accept(this, context);
+            if (argRes.getType() != ResultType.VAL){
+                return new Result(new FunctionCallNode(arguments, name, node.getPos()));
+            }
+            double value = argRes.getVal();
             switch (name) {
                 case "sqrt":
                     return new Result(Math.sqrt(value));
@@ -126,6 +130,11 @@ public class EvalNodeVisitor implements NodeVisitor {
         } else if (arguments.size() == 2){
             Node argX = arguments.get(0);
             Node argY = arguments.get(1);
+            Result argXRes = argX.accept(this, context);
+            Result argYRes = argY.accept(this, context);
+            if (argXRes.getType() != ResultType.VAL || argYRes.getType() != ResultType.VAL){
+                return new Result(new FunctionCallNode(arguments, name, node.getPos()));
+            }
             double xValue = argX.accept(this, context).getVal();
             double yValue = argY.accept(this, context).getVal();
             switch (name) {

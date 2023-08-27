@@ -127,4 +127,10 @@ public class FunctionsTest {
         assertEquals("f(x y + , x y *) g(x) - ", execute("rpn # f(x+y, x*y)-g(x)"));
     }
 
+    @Test
+    public void commonFunctionUnknownVariable(){
+        assertEquals("sin(x)^2+cos(x)^2", execute("f(x) = sin(x)^2+cos(x)^2"));
+        assertEquals("sin(y)^2+cos(y)^2", execute("f(y)"));
+    }
+
 }

@@ -55,7 +55,7 @@ public class PrintNodeVisitor implements NodeVisitor {
         char operatorChar = operator.toString().charAt(0);
         Integer operatorPriority = priorities.get(operatorChar);
         minPriority = operatorPriority;
-        if (operatorPriority > priority){
+        if (operatorPriority >= priority){
             operandString = '(' + operandString + ')';
         }
         return new Result(operatorChar+operandString);
