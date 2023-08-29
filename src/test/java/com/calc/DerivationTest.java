@@ -1,9 +1,6 @@
 package com.calc;
 
-import com.calc.command.EvalNodeVisitor;
-import com.calc.command.PrintNodeVisitor;
-import com.calc.command.Result;
-import com.calc.command.ResultType;
+import com.calc.command.*;
 import com.calc.node.Node;
 import com.calc.parser.MathExpressionParser;
 import org.junit.jupiter.api.Assertions;
@@ -22,13 +19,14 @@ public class DerivationTest {
         if (resultExpression.getType() == ResultType.VAL){
             return String.valueOf(resultExpression.getVal());
         }
-        Result result = resultExpression.getExpression().accept(new PrintNodeVisitor(), context);
+        Result simplified = resultExpression.getExpression().accept(new SimplifyNodeVisitor(), context);
+        Result result = simplified.getExpression().accept(new PrintNodeVisitor(), context);
         return result.getStr();
     }
 
     @Test
     public void constantMulVariableDerivation(){
-        Assertions.assertEquals("2.0", calculate("(2*x)'"));
+        Assertions.assertEquals("2", calculate("(2*x)'"));
     }
 
     @Test
@@ -44,7 +42,7 @@ public class DerivationTest {
 
     @Test
     public void multipleVariableDerivation(){
-        Assertions.assertEquals("3.0", calculate("(2*x+y)'"));
+        Assertions.assertEquals("3", calculate("(2*x+y)'"));
     }
 
     @Test
@@ -64,12 +62,12 @@ public class DerivationTest {
 
     @Test
     public void mulDerivation(){
-        Assertions.assertEquals("2*x*x+x^2*1", calculate("(x^2*x)'"));
+        Assertions.assertEquals("2*x*x+x^2", calculate("(x^2*x)'"));
     }
 
     @Test
     public void divDerivation(){
-        Assertions.assertEquals("(2*x*x-x^2*1)/x^2", calculate("(x^2/x)'"));
+        Assertions.assertEquals("(2*x*x-x^2)/x^2", calculate("(x^2/x)'"));
     }
 
     @Test
@@ -110,7 +108,7 @@ public class DerivationTest {
 
     @Test
     public void functionPowDerivation(){
-        Assertions.assertEquals("3*f'(x)*f(x)^2", calculate("(f(x)^3)'"));
+        Assertions.assertEquals("f'(x)*3*f(x)^2", calculate("(f(x)^3)'"));
     }
 
     @Test
@@ -122,6 +120,17 @@ public class DerivationTest {
     public void pointDerivation(){
         Assertions.assertEquals("x^2", calculate("f(x) = x^2"));
         Assertions.assertEquals("10.0", calculate("f'(5)"));
+    }
+
+    @Test
+    public void secondDegreeFunctionDerivative(){
+        Assertions.assertEquals("x^3", calculate("f(x) = x^3"));
+        Assertions.assertEquals("3*(2*x)", calculate("f''(x)"));
+    }
+
+    @Test
+    public void secondDegreeExpressionDerivative(){
+        Assertions.assertEquals("3*(2*x)", calculate("(x^3)''"));
     }
 
 

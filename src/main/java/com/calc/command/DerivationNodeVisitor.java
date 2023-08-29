@@ -63,7 +63,9 @@ public class DerivationNodeVisitor implements NodeVisitor {
     @Override
     public Result accept(FunctionCallNode node, Context context) {
         List<Node> arguments = node.getArguments();
-        Node arg0 = arguments.get(0).accept(new EvalNodeVisitor(), context).getExpression();
+        Node arg0Get = arguments.get(0);
+        Result evalArg0 = arg0Get.accept(new EvalNodeVisitor(), context);
+        Node arg0 = evalArg0.getExpression();
         Node argDeriv = arg0.accept(this, context).getExpression();
         Node derivFuncNode = new FunctionDerivationNode(node, 1);
         Node resultNode = new BinaryOperatorNode(Type.MUL, argDeriv, derivFuncNode);

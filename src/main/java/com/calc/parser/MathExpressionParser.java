@@ -96,6 +96,9 @@ public class MathExpressionParser {
                 nxtFun = lex.nextToken();
                 if (nxtFun.getType() == CLOSING_BR){
                     FunctionCallNode functionCall = new FunctionCallNode(args, nxt.getName(), nxt.getPos());
+                    if (derivativeDegree == 0){
+                        return functionCall;
+                    }
                     return new FunctionDerivationNode(functionCall, derivativeDegree);
                 } else {
                     throw new UnexpectedTokenException(nxt, ")");

@@ -1,9 +1,6 @@
 package com.calc;
 
-import com.calc.command.NodeVisitor;
-import com.calc.command.PrintNodeVisitor;
-import com.calc.command.Result;
-import com.calc.command.ResultType;
+import com.calc.command.*;
 
 public class Output {
 
@@ -21,13 +18,12 @@ public class Output {
     }
 
     public static void printResult(Result er){
-        if (er.getType() == ResultType.VAL) {
-            System.out.println(er.getVal());
-        } else if (er.getType() == ResultType.STR){
+        if (er.getType() == ResultType.STR){
             System.out.println(er.getStr());
         } else {
             NodeVisitor print = new PrintNodeVisitor();
-            System.out.println(er.getExpression().accept(print, new Context()).getStr());
+            Result newRes = er.getExpression().accept(new SimplifyNodeVisitor(), new Context());
+            System.out.println(newRes.getExpression().accept(print, new Context()).getStr());
         }
     }
 }
