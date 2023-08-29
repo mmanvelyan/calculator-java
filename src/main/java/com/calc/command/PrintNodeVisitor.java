@@ -20,6 +20,7 @@ public class PrintNodeVisitor implements NodeVisitor {
         priorities.put('*', 1);
         priorities.put('/', 1);
         priorities.put('^', 2);
+        priorities.put('\'', 3);
     }
 
     @Override
@@ -49,16 +50,20 @@ public class PrintNodeVisitor implements NodeVisitor {
     public Result accept(UnaryOperatorNode node, Context context) {
         minPriority = Integer.MAX_VALUE;
         Node operand = node.getOperand();
+        Type operator = node.getOperator();
         String operandString = operand.accept(this, context).getStr();
         int priority = minPriority;
-        Type operator = node.getOperator();
         char operatorChar = operator.toString().charAt(0);
         Integer operatorPriority = priorities.get(operatorChar);
         minPriority = operatorPriority;
         if (operatorPriority >= priority){
             operandString = '(' + operandString + ')';
         }
-        return new Result(operatorChar+operandString);
+        if (operator == Type.DERIV){
+            return new Result(operandString+operatorChar);
+        } else {
+            return new Result(operatorChar+operandString);
+        }
     }
 
     @Override
@@ -99,6 +104,24 @@ public class PrintNodeVisitor implements NodeVisitor {
         minPriority = Integer.MAX_VALUE;
         String name = node.getName();
         return new Result(name);
+    }
+
+    @Override
+    public Result accept(FunctionDerivationNode node, Context context) {
+        minPriority = Integer.MAX_VALUE;
+        FunctionCallNode functionCallNode = node.getFunction();
+        int derivationDegree = node.getDerivationDegree();
+        String res = functionCallNode.getName();
+        for (int i = 0; i < derivationDegree; i++) {
+            res += "'";
+        }
+        res += "(";
+        List<Node> arguments = functionCallNode.getArguments();
+        for (Node arg : arguments){
+            res += arg.accept(this, context).getStr() + ", ";
+        }
+        res = res.substring(0, res.length()-2) + ")";
+        return new Result(res);
     }
 
 }

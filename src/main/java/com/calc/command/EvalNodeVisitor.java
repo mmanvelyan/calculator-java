@@ -56,13 +56,22 @@ public class EvalNodeVisitor implements NodeVisitor {
             switch (operator) {
                 case SUB:
                     return new Result(-value);
+                case DERIV:
+                    return new Result(0);
                 default:
                     throw new InvalidOperationException(node, operator);
             }
         } else {
             Node expression = res.getExpression();
-            Result result = new Result(new UnaryOperatorNode(operator, expression));
-            return result;
+            switch (operator) {
+                case SUB:
+                    return new Result(new UnaryOperatorNode(Type.SUB, expression));
+                case DERIV:
+                    Node derivative = expression.accept(new DerivationNodeVisitor(), context).getExpression();
+                    return derivative.accept(this, context);
+                default:
+                    throw new InvalidOperationException(node, operator);
+            }
         }
     }
 
@@ -200,5 +209,37 @@ public class EvalNodeVisitor implements NodeVisitor {
         } catch (Exception e) {
             return new Result(variableValue);
         }
+    }
+
+    @Override
+    public Result accept(FunctionDerivationNode node, Context context) {
+        FunctionCallNode functionCallNode = node.getFunction();
+        int derivationDegree = node.getDerivationDegree();
+        int pos = functionCallNode.getPos();
+        String functionName = functionCallNode.getName();
+        List<Node> arguments = evalArguments(functionCallNode, context);
+        Function function = context.getFunction(functionName);
+        if (function == null){
+            return new Result(new FunctionDerivationNode(new FunctionCallNode(arguments, functionName, pos), derivationDegree));
+        }
+        List<String> funArguments = function.getArgs();
+        if (funArguments.size() != arguments.size()){
+            return new Result(new FunctionDerivationNode(new FunctionCallNode(arguments, functionName, pos), derivationDegree));
+        }
+        Node functionDefinition = function.getExpression();
+        DerivationNodeVisitor derivationNodeVisitor = new DerivationNodeVisitor();
+        Context emptyVariablesContext = new Context(new Variables(), context.getFunctions());
+        for (int i = 0; i < derivationDegree; i++){
+            Result derivationRes = functionDefinition.accept(derivationNodeVisitor, emptyVariablesContext);
+            functionDefinition = derivationRes.getExpression();
+        }
+        Function derivFunction = new Function(funArguments, functionDefinition);
+        String newName = functionName;
+        for (int i = 0; i < derivationDegree; i++) {
+            newName += "'";
+        }
+        context.createFunction(newName, derivFunction);
+        Node newCall = new FunctionCallNode(arguments, newName, pos);
+        return newCall.accept(this, context);
     }
 }

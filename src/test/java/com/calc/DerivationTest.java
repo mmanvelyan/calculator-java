@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled
 public class DerivationTest {
 
     private final Context context = new Context();
@@ -84,6 +83,12 @@ public class DerivationTest {
     }
 
     @Test
+    public void functionResultDerivation(){
+        Assertions.assertEquals("x^2", calculate("f(x) = x^2"));
+        Assertions.assertEquals("0.0", calculate("(f(5))'"));
+    }
+
+    @Test
     public void functionAddDerivation(){
         Assertions.assertEquals("f'(x)+g'(x)", calculate("(f(x)+g(x))'"));
     }
@@ -100,7 +105,7 @@ public class DerivationTest {
 
     @Test
     public void functionDivDerivation(){
-        Assertions.assertEquals("(f'(x)*g(x)-f(x)*g'(x))/g(x)^2", calculate("(f(x)*g(x))'"));
+        Assertions.assertEquals("(f'(x)*g(x)-f(x)*g'(x))/g(x)^2", calculate("(f(x)/g(x))'"));
     }
 
     @Test
@@ -110,7 +115,7 @@ public class DerivationTest {
 
     @Test
     public void functionCompositionDerivation(){
-        Assertions.assertEquals("g'(x)*f'(g(x))", calculate("f'(g(x))"));
+        Assertions.assertEquals("g'(x)*f'(g(x))", calculate("(f(g(x)))'"));
     }
 
     @Test

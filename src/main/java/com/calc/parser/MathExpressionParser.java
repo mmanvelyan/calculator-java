@@ -59,9 +59,22 @@ public class MathExpressionParser {
         }
     }
 
+    int getDerivativeDegree(BookmarkLexer lex){
+        int res = 0;
+        Token nxt = lex.nextToken();
+        while (nxt.getType() == DERIV){
+            res++;
+            nxt = lex.nextToken();
+        }
+        lex.returnToPrevPos();
+        return res;
+    }
+
     private Node parseNumber(BookmarkLexer lex){
         Token nxt = lex.nextToken();
         Type type = nxt.getType();
+        Node result;
+        int derivativeDegree = 0;
         if (type == SUB){
             return new UnaryOperatorNode(SUB, parseNumber(lex));
         } else if (type == OPEN_BR){
@@ -70,26 +83,34 @@ public class MathExpressionParser {
             if (nxt.getType() != CLOSING_BR){
                 throw new UnexpectedTokenException(nxt, ")");
             }
-            return expression;
+            derivativeDegree = getDerivativeDegree(lex);
+            result = expression;
         } else if (type == NUM) {
-            return new NumberNode(nxt.getVal());
+            derivativeDegree = getDerivativeDegree(lex);
+            result = new NumberNode(nxt.getVal());
         } else if (type == NAME) {
+            derivativeDegree = getDerivativeDegree(lex);
             Token nxtFun = lex.nextToken();
             if (nxtFun.getType() == OPEN_BR){
                 ArrayList<Node> args = parseArgs(lex);
                 nxtFun = lex.nextToken();
                 if (nxtFun.getType() == CLOSING_BR){
-                    return new FunctionCallNode(args, nxt.getName(), nxt.getPos());
+                    FunctionCallNode functionCall = new FunctionCallNode(args, nxt.getName(), nxt.getPos());
+                    return new FunctionDerivationNode(functionCall, derivativeDegree);
                 } else {
                     throw new UnexpectedTokenException(nxt, ")");
                 }
             } else {
                 lex.returnToPrevPos();
-                return new VariableNode(nxt.getName(), nxt.getPos());
+                result = new VariableNode(nxt.getName(), nxt.getPos());
             }
         } else {
             throw new UnexpectedTokenException(nxt, "(", "NUM", "VAR");
         }
+        for (int i = 0; i < derivativeDegree; i++) {
+            result = new UnaryOperatorNode(DERIV, result);
+        }
+        return result;
     }
 
     private Node parsePower(BookmarkLexer lex){

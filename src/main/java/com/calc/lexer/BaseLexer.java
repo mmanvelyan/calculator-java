@@ -29,6 +29,9 @@ public class BaseLexer implements Lexer {
             case '=':
                 nxt = new Token(Type.ASS, pos-1);
                 break;
+            case '\'':
+                nxt = new Token(DERIV, pos-1);
+                break;
             case '^':
                 nxt = new Token(POWER, pos-1);
                 break;

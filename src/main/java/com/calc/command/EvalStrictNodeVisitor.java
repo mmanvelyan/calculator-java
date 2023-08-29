@@ -37,8 +37,12 @@ public class EvalStrictNodeVisitor implements NodeVisitor {
     @Override
     public Result accept(UnaryOperatorNode node, Context context) {
         Node operand = node.getOperand();
-        double value = operand.accept(this, context).getVal();
         Type operator = node.getOperator();
+        if (operator == Type.DERIV){
+            Node derivationResult = operand.accept(new DerivationNodeVisitor(), context).getExpression();
+            return derivationResult.accept(this, context);
+        }
+        double value = operand.accept(this, context).getVal();
         switch (operator) {
             case SUB:
                 return new Result(-value);
@@ -154,5 +158,37 @@ public class EvalStrictNodeVisitor implements NodeVisitor {
             throw new UnexpectedVariableException(name, pos);
         }
         return value.accept(this, context);
+    }
+
+    @Override
+    public Result accept(FunctionDerivationNode node, Context context) {
+        FunctionCallNode functionCallNode = node.getFunction();
+        int derivationDegree = node.getDerivationDegree();
+        int pos = functionCallNode.getPos();
+        String functionName = functionCallNode.getName();
+        List<Node> arguments = functionCallNode.getArguments();
+        Function function = context.getFunction(functionName);
+        if (function == null){
+            throw new UnexpectedFunctionException(functionName, pos);
+        }
+        List<String> funArguments = function.getArgs();
+        if (funArguments.size() != arguments.size()){
+            throw new UnexpectedFunctionException(functionName, pos);
+        }
+        Node functionDefinition = function.getExpression();
+        DerivationNodeVisitor derivationNodeVisitor = new DerivationNodeVisitor();
+        Context emptyVariablesContext = new Context(new Variables(), context.getFunctions());
+        for (int i = 0; i < derivationDegree; i++){
+            Result derivationRes = functionDefinition.accept(derivationNodeVisitor, emptyVariablesContext);
+            functionDefinition = derivationRes.getExpression();
+        }
+        Function derivFunction = new Function(funArguments, functionDefinition);
+        String newName = functionName;
+        for (int i = 0; i < derivationDegree; i++) {
+            newName += "'";
+        }
+        context.createFunction(newName, derivFunction);
+        Node newCall = new FunctionCallNode(arguments, newName, pos);
+        return newCall.accept(this, context);
     }
 }

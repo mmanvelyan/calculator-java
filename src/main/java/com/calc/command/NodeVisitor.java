@@ -10,4 +10,5 @@ public interface NodeVisitor {
     Result accept(FunctionCallNode node, Context context);
     Result accept(NumberNode node, Context context);
     Result accept(VariableNode node, Context context);
+    Result accept(FunctionDerivationNode node, Context context);
 }

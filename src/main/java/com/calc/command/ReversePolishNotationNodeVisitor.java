@@ -59,4 +59,8 @@ public class ReversePolishNotationNodeVisitor implements NodeVisitor {
         return new Result(name+" ");
     }
 
+    @Override
+    public Result accept(FunctionDerivationNode node, Context context) {
+        return null;
+    }
 }

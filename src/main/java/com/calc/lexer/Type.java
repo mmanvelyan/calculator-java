@@ -14,7 +14,8 @@ public enum Type {
     ASS("="),
     INV("invalid symbol"),
     COMMA(","),
-    POWER("^");
+    POWER("^"),
+    DERIV("'");
 
     final private String description;
     Type(String description){
