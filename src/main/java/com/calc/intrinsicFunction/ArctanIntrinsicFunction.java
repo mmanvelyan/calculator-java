@@ -1,0 +1,38 @@
+package com.calc.intrinsicFunction;
+
+import com.calc.Context;
+import com.calc.command.EvalStrictNodeVisitor;
+import com.calc.command.NodeVisitor;
+import com.calc.command.Result;
+import com.calc.command.ResultType;
+import com.calc.lexer.Type;
+import com.calc.node.BinaryOperatorNode;
+import com.calc.node.IntrinsicFunctionNode;
+import com.calc.node.Node;
+import com.calc.node.NumberNode;
+
+public class ArctanIntrinsicFunction implements IntrinsicFunction {
+
+    private final Node argument;
+
+    public ArctanIntrinsicFunction(Node argument) {
+        this.argument = argument;
+    }
+
+    @Override
+    public Result evaluate(NodeVisitor visitor, Context context) {
+        Result res = argument.accept(visitor, context);
+        if (res.getType() == ResultType.VAL) {
+            double val = res.getVal();
+            return new Result(Math.atan(val));
+        }
+        return new Result(new IntrinsicFunctionNode(new ArctanIntrinsicFunction(res.getExpression())));
+    }
+
+    @Override
+    public Result getDerivative() {
+        Node x2 = new BinaryOperatorNode(Type.POWER, argument, new NumberNode(2));
+        Node denominator = new BinaryOperatorNode(Type.ADD, new NumberNode(1), x2);
+        return new Result(new BinaryOperatorNode(Type.DIV, new NumberNode(1), denominator));
+    }
+}

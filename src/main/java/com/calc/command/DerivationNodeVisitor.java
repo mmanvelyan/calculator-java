@@ -1,6 +1,7 @@
 package com.calc.command;
 
 import com.calc.Context;
+import com.calc.intrinsicFunction.IntrinsicFunction;
 import com.calc.lexer.Type;
 import com.calc.node.*;
 
@@ -92,5 +93,11 @@ public class DerivationNodeVisitor implements NodeVisitor {
         Node derivFuncNode = new FunctionDerivationNode(functionNode, derivationDegree+1);
         Node resultNode = new BinaryOperatorNode(Type.MUL, argDeriv, derivFuncNode);
         return resultNode.accept(new EvalNodeVisitor(), context);
+    }
+
+    @Override
+    public Result accept(IntrinsicFunctionNode node, Context context) {
+        IntrinsicFunction function = node.getFunction();
+        return function.getDerivative();
     }
 }

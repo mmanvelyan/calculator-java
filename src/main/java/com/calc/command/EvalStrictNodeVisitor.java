@@ -3,6 +3,7 @@ package com.calc.command;
 import com.calc.Context;
 import com.calc.Function;
 import com.calc.Variables;
+import com.calc.intrinsicFunction.IntrinsicFunction;
 import com.calc.lexer.Type;
 import com.calc.node.*;
 
@@ -190,5 +191,11 @@ public class EvalStrictNodeVisitor implements NodeVisitor {
         context.createFunction(newName, derivFunction);
         Node newCall = new FunctionCallNode(arguments, newName, pos);
         return newCall.accept(this, context);
+    }
+
+    @Override
+    public Result accept(IntrinsicFunctionNode node, Context context) {
+        IntrinsicFunction function = node.getFunction();
+        return function.evaluate(this, context);
     }
 }
